@@ -1,21 +1,17 @@
+{-# OPTIONS_GHC -Wno-name-shadowing #-}
+
 -- | Miscellaneous functions on lists types.
 module Whooie.Utils.List
   (
-    get,
     collect_maybe,
     collect_right,
     collect_left,
+    unsnoc,
+    unpack_fml,
   ) where
 
-get_inner :: Int -> Maybe a -> (Int, a) -> Maybe a
-get_inner nth acc (k, it) =
-  case acc of
-    Just a -> Just a
-    Nothing -> if k == nth then Just it else Nothing
-
--- | Like `!!`, but returning the result in a `Maybe`.
-get :: Int -> [a] -> Maybe a
-get nth items = foldl (get_inner nth) Nothing (zip [0..] items)
+import Data.Function ((&))
+import Data.List (uncons)
 
 -- | Collect a list of `Maybe`s into a `Maybe` of a list, returning @Just@ if
 -- all items are @Just@, otherwise @Nothing@.
@@ -52,4 +48,18 @@ collect_left items =
       case collect_left rest of
         Right r -> Right r
         Left rec_res -> Left (item : rec_res)
+
+-- | Use this until the actual @unsnoc@ is added to the Stack upstream.
+unsnoc :: [a] -> Maybe ([a], a)
+unsnoc = foldr (\x -> Just . maybe ([], x) (\(~(a, b)) -> (x : a, b))) Nothing
+
+-- | Unpack a list into @(first, mid, last)@, where @first@ and @last@ are the
+-- first and last elements of the list and @mid@ is a list of everything in
+-- between. @mid@ may be empty. Returns @Nothing@ if the original list has fewer
+-- than two elements.
+unpack_fml :: [a] -> Maybe (a, [a], a)
+unpack_fml items =
+  uncons items
+  >>= (\(first, rest) ->
+    unsnoc rest & fmap (\(mid, last) -> (first, mid, last)))
 
