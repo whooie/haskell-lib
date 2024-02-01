@@ -1,5 +1,3 @@
-{-# OPTIONS_GHC -Wno-name-shadowing #-}
-
 -- | Provides implementations of Newton-Raphson root-finding and golden-section
 -- extremum finding.
 module Whooie.Math.Search

@@ -1,5 +1,3 @@
-{-# OPTIONS_GHC -Wno-name-shadowing #-}
-
 -- | Basic properties of a Gaussian beam.
 module Whooie.Phys.Beam
   (

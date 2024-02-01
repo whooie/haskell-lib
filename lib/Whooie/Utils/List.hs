@@ -1,5 +1,3 @@
-{-# OPTIONS_GHC -Wno-name-shadowing #-}
-
 -- | Miscellaneous functions on lists types.
 module Whooie.Utils.List
   (

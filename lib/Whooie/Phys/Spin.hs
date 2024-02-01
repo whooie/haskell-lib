@@ -1,5 +1,3 @@
-{-# OPTIONS_GHC -Wno-name-shadowing #-}
-
 -- | Definitions for manipulating total-spin/spin-projection pairs and
 -- calculating quantities associated therewith.
 module Whooie.Phys.Spin
