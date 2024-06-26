@@ -1,34 +1,29 @@
 -- | Definitions for manipulating total-spin/spin-projection pairs and
 -- calculating quantities associated therewith.
 module Whooie.Phys.Spin
-  (
-    Spin,
-    SpinError(..),
-    SpinResult,
-    StretchedState(..),
-    new,
-    of_halves,
-    of_halves_pair,
-    halves,
-    new_stretched_pos,
-    new_stretched_neg,
-    new_stretched,
-    tot,
-    proj,
-    is_stretched_pos,
-    is_stretched_neg,
-    is_stretched,
-    to_floats,
-    cmp,
-    refl,
-    raise,
-    lower,
-    projections,
-    projections_rev,
-    cg,
-    w3j_sel,
-    w3j,
-    w6j,
+  ( Spin
+  , SpinError (..)
+  , SpinResult
+  , StretchedState (..)
+  , new
+  , ofHalves
+  , ofHalvesPair
+  , halves
+  , newStretchedPos
+  , newStretchedNeg
+  , newStretched
+  , isStretched
+  , toFloats
+  , cmp
+  , refl
+  , raise
+  , lower
+  , projections
+  , projectionsRev
+  , cg
+  , w3jSel
+  , w3j
+  , w6j
   ) where
 
 import Text.Printf (printf)
@@ -43,8 +38,8 @@ data SpinError =
   deriving (Eq)
 
 instance Show SpinError where
-  show spin_err =
-    case spin_err of
+  show spinErr =
+    case spinErr of
       InvalidProj msg -> printf "InvalidProj: %s" msg
       InvalidRaise msg -> printf "InvalidRaise: %s" msg
       InvalidLower msg -> printf "InvalidLower: %s" msg
@@ -62,40 +57,37 @@ instance Show Spin where
 -- the total in magnitude, and that both numbers have the same parity.
 new :: Tot.SpinTotal -> Proj.SpinProj -> SpinResult Spin
 new tot proj =
-  let
-    j = Tot.halves tot
-    m = Proj.halves proj
-    check_parity = j `mod` 2 == m `mod` 2
-    check_mag = m `elem` [-j .. j]
-    t = show tot
-    p = show proj
-   in
-    if check_parity then
-      if check_mag then
-        Right (Spin tot proj)
+  let j = Tot.halves tot
+      m = Proj.halves proj
+      checkParity = j `mod` 2 == m `mod` 2
+      checkMag = m `elem` [-j .. j]
+      t = show tot
+      p = show proj
+   in if checkParity then
+        if checkMag then
+          Right (Spin tot proj)
+        else
+          let msg = printf "proj %s must not exceed tot %s in magnitude" p t
+           in Left (InvalidProj msg)
       else
-        let
-          msg = printf "projection %s must not exceed total %s in magnitude" p t
+        let msg = printf "proj %s and tot %s must have equal parity" p t
          in Left (InvalidProj msg)
-    else
-      let msg = printf "projection %s and total %s must have equal parity" p t
-       in Left (InvalidProj msg)
 
--- | @of_halves tot proj@: Create a new @Spin@ from raw half-quanta.
-of_halves :: Int -> Int -> SpinResult Spin
-of_halves tot proj = new (Tot.new tot) (Proj.new proj)
+-- | @ofHalves tot proj@: Create a new @Spin@ from raw half-quanta.
+ofHalves :: Int -> Int -> SpinResult Spin
+ofHalves tot proj = new (Tot.new tot) (Proj.new proj)
 
--- | @of_halves_pair (tot, proj)@: Create a new @Spin@ from raw half-quanta.
-of_halves_pair :: (Int, Int) -> SpinResult Spin
-of_halves_pair (tot, proj) = of_halves tot proj
+-- | @ofHalvesPair (tot, proj)@: Create a new @Spin@ from raw half-quanta.
+ofHalvesPair :: (Int, Int) -> SpinResult Spin
+ofHalvesPair (tot, proj) = ofHalves tot proj
 
 -- | Convert to a pair of numbers of half-quanta.
 halves :: Spin -> (Int, Int)
-halves (Spin tot proj) = (Tot.halves $ tot, Proj.halves $ proj)
+halves (Spin tot proj) = (Tot.halves tot, Proj.halves proj)
 
 -- | Convert to a pair of ordinary floating-point values.
-to_floats :: Spin -> (Float, Float)
-to_floats (Spin tot proj) = (Tot.to_float $ tot, Proj.to_float $ proj)
+toFloats :: Spin -> (Float, Float)
+toFloats (Spin tot proj) = (Tot.toFloat tot, Proj.toFloat proj)
 
 -- | Get the total-spin part of a @Spin@.
 tot :: Spin -> Tot.SpinTotal
@@ -109,44 +101,44 @@ data StretchedState = Pos | Neg
 
 -- | Create a new stretched state where the projection number is equal to the
 -- total in magnitude and oriented in the positive direction.
-new_stretched_pos :: Tot.SpinTotal -> Spin
-new_stretched_pos tot =
-  case of_halves (Tot.halves tot) (Tot.halves tot) of
+newStretchedPos :: Tot.SpinTotal -> Spin
+newStretchedPos tot =
+  case ofHalves (Tot.halves tot) (Tot.halves tot) of
     Right s -> s
-    Left _ -> error "impossible"
+    Left _ -> error "unreachable"
 
 -- | Create a new stretched state where the projection number is equal to the
 -- total in magnitude and oriented in the negative direction.
-new_stretched_neg :: Tot.SpinTotal -> Spin
-new_stretched_neg tot =
-  case of_halves (Tot.halves tot) (-(Tot.halves tot)) of
+newStretchedNeg :: Tot.SpinTotal -> Spin
+newStretchedNeg tot =
+  case ofHalves (Tot.halves tot) (-(Tot.halves tot)) of
     Right s -> s
-    Left _ -> error "impossible"
+    Left _ -> error "unreachable"
 
 -- | Create a new stretched state.
-new_stretched :: StretchedState -> Tot.SpinTotal -> Spin
-new_stretched dir tot =
+newStretched :: StretchedState -> Tot.SpinTotal -> Spin
+newStretched dir tot =
   case dir of
-    Pos -> new_stretched_pos tot
-    Neg -> new_stretched_neg tot
+    Pos -> newStretchedPos tot
+    Neg -> newStretchedNeg tot
 
--- | @is_stretched_pos s@: Return @True@ if @s@ is a stretched state pointing in
+-- | @isStretchedPos s@: Return @True@ if @s@ is a stretched state pointing in
 -- the positive direction.
-is_stretched_pos :: Spin -> Bool
-is_stretched_pos (Spin tot proj) = m == j
+isStretchedPos :: Spin -> Bool
+isStretchedPos (Spin tot proj) = m == j
   where m = Proj.halves proj
         j = Tot.halves tot
 
--- | @is_stretched_neg s@: Return @True@ if @s@ is a stretched state pointing in
+-- | @isStretchedNeg s@: Return @True@ if @s@ is a stretched state pointing in
 -- the negative direction.
-is_stretched_neg :: Spin -> Bool
-is_stretched_neg (Spin tot proj) = m == (-j)
+isStretchedNeg :: Spin -> Bool
+isStretchedNeg (Spin tot proj) = m == (-j)
   where m = Proj.halves proj
         j = Tot.halves tot
 
--- | @is_stretched s@: Return @True@ if @s@ is a stretched state.
-is_stretched :: Spin -> Bool
-is_stretched s = (is_stretched_pos s) || (is_stretched_neg s)
+-- | @isStretched s@: Return @True@ if @s@ is a stretched state.
+isStretched :: Spin -> Bool
+isStretched s = (isStretchedPos s) || (isStretchedNeg s)
 
 -- | Flip the sign of the projection number.
 refl :: Spin -> Spin
@@ -156,7 +148,7 @@ refl (Spin tot proj) = Spin tot (Proj.refl proj)
 -- positively stretched state.
 raise :: Spin -> SpinResult Spin
 raise s =
-  if is_stretched_pos s then
+  if isStretchedPos s then
     let msg = printf "cannot raise stretched state %s" (show s)
      in Left (InvalidRaise msg)
   else
@@ -167,7 +159,7 @@ raise s =
 -- negatively stretched state.
 lower :: Spin -> SpinResult Spin
 lower s =
-  if is_stretched_neg s then
+  if isStretchedNeg s then
     let msg = printf "cannot lower stretched state %s" (show s)
      in Left (InvalidLower msg)
   else
@@ -182,8 +174,8 @@ projections tot = [Spin tot (Proj.new m) | m <- [-j, -j + 2 .. j]]
 
 -- | Return a list containing all available @Spin@ states with fixed total spin,
 -- starting from the most positive.
-projections_rev :: Tot.SpinTotal -> [Spin]
-projections_rev tot = [Spin tot (Proj.new m) | m <- [j, j - 2 .. -j]]
+projectionsRev :: Tot.SpinTotal -> [Spin]
+projectionsRev tot = [Spin tot (Proj.new m) | m <- [j, j - 2 .. -j]]
   where j = Tot.halves tot
 
 -- | Compare the projection numbers of two states if they have the same total
@@ -198,24 +190,24 @@ ffactorial n = fromInteger $ toInteger $ foldl (*) 1 [2 .. n]
 (//) :: Int -> Int -> Int
 (//) = quot
 
-cg_summand :: (Int, Int, Int, Int, Int, Int) -> Int -> Float
-cg_summand (j1, m1, j2, m2, j12, _m12) k =
+cgSummand :: (Int, Int, Int, Int, Int, Int) -> Int -> Float
+cgSummand (j1, m1, j2, m2, j12, _m12) k =
   let
     sign = if k `mod` 2 == 0 then 1.0 else -1.0
-    f_k = ffactorial k
-    f_j1_pj2_mj12_mk = ffactorial ((j1 + j2 - j12) // 2 - k)
-    f_j1_mm1_mk = ffactorial ((j1 - m1) // 2 - k)
-    f_j2_pm2_mk = ffactorial ((j2 + m2) // 2 - k)
-    f_j12_mj2_pm1_pk = ffactorial ((j12 - j2 + m1) // 2 + k)
-    f_j12_mj1_mm2_pk = ffactorial ((j12 - j1 - m2) // 2 + k)
+    fK = ffactorial k
+    fJ1Pj2Mj12Mk = ffactorial ((j1 + j2 - j12) // 2 - k)
+    fJ1Mm1Mk = ffactorial ((j1 - m1) // 2 - k)
+    fJ2Pm2Mk = ffactorial ((j2 + m2) // 2 - k)
+    fJ12Mj2Pm1Pk = ffactorial ((j12 - j2 + m1) // 2 + k)
+    fJ12Mj1Mm2Pk = ffactorial ((j12 - j1 - m2) // 2 + k)
    in
     sign
-      / f_k
-      / f_j1_pj2_mj12_mk
-      / f_j1_mm1_mk
-      / f_j2_pm2_mk
-      / f_j12_mj2_pm1_pk
-      / f_j12_mj1_mm2_pk
+      / fK
+      / fJ1Pj2Mj12Mk
+      / fJ1Mm1Mk
+      / fJ2Pm2Mk
+      / fJ12Mj2Pm1Pk
+      / fJ12Mj1Mm2Pk
 
 -- | @cg jm1 jm2 jm12@: Compute the Clebsch-Gordan coefficient
 -- @⟨jm1, jm2∣jm12⟩@.
@@ -228,18 +220,18 @@ cg jm1 jm2 jm12 =
     kmin = max 0 $ max (-(j12 - j2 + m1) // 2) (-(j12 - j1 - m2) // 2)
     kmax = min ((j1 + j2 - j12) // 2) $ min ((j1 - m1) // 2) ((j2 + m2) // 2)
     fsum =
-      foldl (+) 0.0 $ map (cg_summand (j1, m1, j2, m2, j12, m12)) [kmin .. kmax]
-    j12t2_p1 = fromInteger $ toInteger (j12 + 1)
-    f_j12_pj1_mj2 = ffactorial ((j12 + j1 - j2) // 2)
-    f_j12_mj1_pj2 = ffactorial ((j12 - j1 + j2) // 2)
-    f_j1_pj2_mj12 = ffactorial ((j1 + j2 - j12) // 2)
-    f_j1_pj2_pj12_p1 = ffactorial ((j1 + j2 + j12) // 2 + 1)
-    f_j12_pm12 = ffactorial ((j12 + m12) // 2)
-    f_j12_mm12 = ffactorial ((j12 - m12) // 2)
-    f_j1_mm1 = ffactorial ((j1 - m1) // 2)
-    f_j1_pm1 = ffactorial ((j1 + m1) // 2)
-    f_j2_mm2 = ffactorial ((j2 - m2) // 2)
-    f_j2_pm2 = ffactorial ((j2 + m2) // 2)
+      foldl (+) 0.0 $ map (cgSummand (j1, m1, j2, m2, j12, m12)) [kmin .. kmax]
+    j12t2P1 = fromInteger $ toInteger (j12 + 1)
+    fJ12Pj1Mj2 = ffactorial ((j12 + j1 - j2) // 2)
+    fJ12Mj1Pj2 = ffactorial ((j12 - j1 + j2) // 2)
+    fJ1Pj2Mj12 = ffactorial ((j1 + j2 - j12) // 2)
+    fJ1Pj2Pj12P1 = ffactorial ((j1 + j2 + j12) // 2 + 1)
+    fJ12Pm12 = ffactorial ((j12 + m12) // 2)
+    fJ12Mm12 = ffactorial ((j12 - m12) // 2)
+    fJ1Mm1 = ffactorial ((j1 - m1) // 2)
+    fJ1Pm1 = ffactorial ((j1 + m1) // 2)
+    fJ2Mm2 = ffactorial ((j2 - m2) // 2)
+    fJ2Pm2 = ffactorial ((j2 + m2) // 2)
    in
     if m1 + m2 /= m12 || (j1 + j2) `mod` 2 /= j12 `mod` 2 then
       0.0
@@ -247,29 +239,29 @@ cg jm1 jm2 jm12 =
       0.0
     else
       sqrt (
-        j12t2_p1
-        * f_j12_pj1_mj2
-        * f_j12_mj1_pj2
-        * f_j1_pj2_mj12
-        * f_j12_pm12
-        * f_j12_mm12
-        * f_j1_mm1
-        * f_j1_pm1
-        * f_j2_mm2
-        * f_j2_pm2
-        / f_j1_pj2_pj12_p1
+        j12t2P1
+        * fJ12Pj1Mj2
+        * fJ12Mj1Pj2
+        * fJ1Pj2Mj12
+        * fJ12Pm12
+        * fJ12Mm12
+        * fJ1Mm1
+        * fJ1Pm1
+        * fJ2Mm2
+        * fJ2Pm2
+        / fJ1Pj2Pj12P1
       ) * fsum
 
--- | @w3j_sel jm1 jm2 jm3@: Return @True@ if @jm1@ @jm2@, and @jm3@ satisfy the
+-- | @w3jSel jm1 jm2 jm3@: Return @True@ if @jm1@ @jm2@, and @jm3@ satisfy the
 -- selection rules of the Wigner 3*j* symbol @(jm1 jm2 jm3)@.
-w3j_sel :: Spin -> Spin -> Spin -> Bool
-w3j_sel jm1 jm2 jm3 = msum_0 && jsum_bounds && m_0_implies_jsum_even
+w3jSel :: Spin -> Spin -> Spin -> Bool
+w3jSel jm1 jm2 jm3 = msum0 && jsumBounds && m0ImpliesJsumEven
   where (j1, m1) = halves jm1
         (j2, m2) = halves jm2
         (j3, m3) = halves jm3
-        msum_0 = m1 + m2 + m3 == 0
-        jsum_bounds = abs (j1 - j2) <= j3 && j3 <= j1 + j2
-        m_0_implies_jsum_even =
+        msum0 = m1 + m2 + m3 == 0
+        jsumBounds = abs (j1 - j2) <= j3 && j3 <= j1 + j2
+        m0ImpliesJsumEven =
           not (m1 == 0 && m2 == 0 && m3 == 0)
           && ((j1 + j2 + j3) // 2) `mod` 2 == 0
 
@@ -283,18 +275,18 @@ w3j jm1 jm2 jm3 =
     m3 = Proj.halves $ proj jm3
     sign = if ((j1 - j2 - m3) // 2) `mod` 2 == 0 then 1.0 else -1.0
     denom = sqrt $ fromInteger $ toInteger $ j3 + 1
-    cg_val = cg jm1 jm2 (refl jm3)
-   in sign * cg_val / denom
+    cgVal = cg jm1 jm2 (refl jm3)
+   in sign * cgVal / denom
 
-w6j_filter :: (Spin, Spin, Spin, Spin, Spin, Spin) -> Bool
-w6j_filter (jm1, jm2, jm3, jm4, jm5, jm6) =
-  (w3j_sel (refl jm1) (refl jm2) (refl jm3))
-  && (w3j_sel jm1 (refl jm5) jm6)
-  && (w3j_sel jm4 jm2 (refl jm6))
-  && (w3j_sel (refl jm4) jm5 jm3)
+w6jFilter :: (Spin, Spin, Spin, Spin, Spin, Spin) -> Bool
+w6jFilter (jm1, jm2, jm3, jm4, jm5, jm6) =
+  (w3jSel (refl jm1) (refl jm2) (refl jm3))
+  && (w3jSel jm1 (refl jm5) jm6)
+  && (w3jSel jm4 jm2 (refl jm6))
+  && (w3jSel (refl jm4) jm5 jm3)
 
-w6j_sign :: (Spin, Spin, Spin, Spin, Spin, Spin) -> Float
-w6j_sign (jm1, jm2, jm3, jm4, jm5, jm6) =
+w6jSign :: (Spin, Spin, Spin, Spin, Spin, Spin) -> Float
+w6jSign (jm1, jm2, jm3, jm4, jm5, jm6) =
   let
     (j1, m1) = halves jm1
     (j2, m2) = halves jm2
@@ -305,9 +297,9 @@ w6j_sign (jm1, jm2, jm3, jm4, jm5, jm6) =
     k = (j1 - m1 + j2 - m2 + j3 - m3 + j4 - m4 + j5 - m5 + j6 - m6) // 2
    in if k `mod` 2 == 0 then 1.0 else -1.0
 
-w6j_map :: (Spin, Spin, Spin, Spin, Spin, Spin) -> Float
-w6j_map (jm1, jm2, jm3, jm4, jm5, jm6) =
-  (w6j_sign (jm1, jm2, jm3, jm4, jm5, jm6))
+w6jMap :: (Spin, Spin, Spin, Spin, Spin, Spin) -> Float
+w6jMap (jm1, jm2, jm3, jm4, jm5, jm6) =
+  (w6jSign (jm1, jm2, jm3, jm4, jm5, jm6))
   * (w3j (refl jm1) (refl jm2) (refl jm3))
   * (w3j jm1 (refl jm5) jm6)
   * (w3j jm4 jm2 (refl jm6))
@@ -324,7 +316,7 @@ w6j
   -> Tot.SpinTotal
   -> Float
 w6j j1 j2 j3 j4 j5 j6 =
-  foldl (+) 0.0 $ map w6j_map $ filter w6j_filter spins
+  foldl (+) 0.0 $ map w6jMap $ filter w6jFilter spins
     where
       pj1 = projections j1
       pj2 = projections j2

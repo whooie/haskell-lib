@@ -1,27 +1,26 @@
 -- | Emulates the behavior of Rust's @Maybe@ type, but on `Maybe`s.
 module Whooie.Utils.Maybe
-  (
-    is_just,
-    is_just_and,
-    is_nothing,
-    just_and,
-    just_and_then,
-    just_then,
-    just_or,
-    just_or_else,
-    just_xor,
-    zip,
-    unzip,
-    flatten,
-    map,
-    map_or,
-    map_or_else,
-    unwrap_or,
-    unwrap_or_else,
-    unwrap,
-    expect,
-    expect_with,
-    collect_list,
+  ( isJust
+  , isJustAnd
+  , isNothing
+  , justAnd
+  , justAndThen
+  , justThen
+  , justOr
+  , justOrElse
+  , justXor
+  , zip
+  , unzip
+  , flatten
+  , map
+  , mapOr
+  , mapOrElse
+  , unwrapOr
+  , unwrapOrElse
+  , unwrap
+  , expect
+  , expectWith
+  , collectList
   ) where
 
 import Prelude
@@ -35,80 +34,80 @@ import Prelude
     ($),
   )
 
--- | @is_just opt@ returns @True@ if @opt@ is @Just@.
-is_just :: Maybe a -> Bool
-is_just opt =
+-- | @isJust opt@ returns @True@ if @opt@ is @Just@.
+isJust :: Maybe a -> Bool
+isJust opt =
   case opt of
     Just _ -> True
     Nothing -> False
 
--- | @is_just_and f opt@ returns @f a@ if @opt@ is @Just a@, otherwise @False@.
-is_just_and :: (a -> Bool) -> Maybe a -> Bool
-is_just_and f opt =
+-- | @isJustAnd f opt@ returns @f a@ if @opt@ is @Just a@, otherwise @False@.
+isJustAnd :: (a -> Bool) -> Maybe a -> Bool
+isJustAnd f opt =
   case opt of
     Just a -> f a
     Nothing -> False
 
--- | @is_nothing opt@ returns @True@ if @opt@ is @Nothing@.
-is_nothing :: Maybe a -> Bool
-is_nothing opt =
+-- | @isNothing opt@ returns @True@ if @opt@ is @Nothing@.
+isNothing :: Maybe a -> Bool
+isNothing opt =
   case opt of
     Just _ -> False
     Nothing -> True
 
--- | @just_and opt_a opt_b@ returns @opt_b@ if @opt_a@ is @Just@, otherwise
+-- | @justAnd optA optB@ returns @optB@ if @optA@ is @Just@, otherwise
 -- `Nothing`.
-just_and :: Maybe a -> Maybe b -> Maybe b
-just_and opt_a opt_b =
-  case opt_a of
-    Just _ -> opt_b
+justAnd :: Maybe a -> Maybe b -> Maybe b
+justAnd optA optB =
+  case optA of
+    Just _ -> optB
     Nothing -> Nothing
 
--- | @just_and_then f opt@ returns @f a@ if @opt@ is @Just a@, otherwise
+-- | @justAndThen f opt@ returns @f a@ if @opt@ is @Just a@, otherwise
 -- @Nothing@.
-just_and_then :: (a -> Maybe b) -> Maybe a -> Maybe b
-just_and_then f opt =
+justAndThen :: (a -> Maybe b) -> Maybe a -> Maybe b
+justAndThen f opt =
   case opt of
     Just a -> f a
     Nothing -> Nothing
 
--- | @just_then f opt@ returns @f a@ if @opt@ is @Just a@, otherwise @return@s
+-- | @justThen f opt@ returns @f a@ if @opt@ is @Just a@, otherwise @return@s
 -- @()@.
-just_then :: (a -> IO ()) -> Maybe a -> IO ()
-just_then f opt =
+justThen :: (a -> IO ()) -> Maybe a -> IO ()
+justThen f opt =
   case opt of
     Just a -> f a
     Nothing -> return ()
 
--- | @just_or opt_a opt_b@ returns @opt_b@ if @opt_a@ is @Nothing@, otherwise
+-- | @justOr optA optB@ returns @optB@ if @optA@ is @Nothing@, otherwise
 -- @Nothing@.
-just_or :: Maybe a -> Maybe a -> Maybe a
-just_or opt_a opt_b =
-  case opt_a of
+justOr :: Maybe a -> Maybe a -> Maybe a
+justOr optA optB =
+  case optA of
     Just a -> Just a
-    Nothing -> opt_b
+    Nothing -> optB
 
--- | @just_or_else f opt@ returns @f ()@ if @opt@ is @Nothing@, otherwise @opt@.
-just_or_else :: (() -> Maybe a) -> Maybe a -> Maybe a
-just_or_else f opt =
+-- | @justOrElse f opt@ returns @f ()@ if @opt@ is @Nothing@, otherwise @opt@.
+justOrElse :: (() -> Maybe a) -> Maybe a -> Maybe a
+justOrElse f opt =
   case opt of
     Just a -> Just a
     Nothing -> f ()
 
--- | @just_xor opt_a opt_b@ returns whichever of the two is @Just@ only if
+-- | @justXor optA optB@ returns whichever of the two is @Just@ only if
 -- exactly one of them is @Just@, otherwise @Nothing@.
-just_xor :: Maybe a -> Maybe a -> Maybe a
-just_xor opt_a opt_b =
-  case (opt_a, opt_b) of
+justXor :: Maybe a -> Maybe a -> Maybe a
+justXor optA optB =
+  case (optA, optB) of
     (Just a, Nothing) -> Just a
     (Nothing, Just b) -> Just b
     _ -> Nothing
 
--- | @zip opt_a opt_b@ is @Just (a, b)@ if @opt_a@ is @Just a@ and @opt_b@ is
+-- | @zip optA optB@ is @Just (a, b)@ if @optA@ is @Just a@ and @optB@ is
 -- @Just b@, otherwise @Nothing@.
 zip :: Maybe a -> Maybe b -> Maybe (a, b)
-zip opt_a opt_b =
-  case (opt_a, opt_b) of
+zip optA optB =
+  case (optA, optB) of
     (Just a, Just b) -> Just (a, b)
     _ -> Nothing
 
@@ -135,31 +134,31 @@ map f opt =
     Just a -> Just (f a)
     Nothing -> Nothing
 
--- | @map_or f def opt@ returns @f a@ if @opt@ is @Just a@, otherwise @def@.
-map_or :: (a -> b) -> b -> Maybe a -> b
-map_or f def opt =
+-- | @mapOr f def opt@ returns @f a@ if @opt@ is @Just a@, otherwise @def@.
+mapOr :: (a -> b) -> b -> Maybe a -> b
+mapOr f def opt =
   case opt of
     Just a -> f a
     Nothing -> def
 
--- | @map_or_else f_just f_nothing@ returns @f_just a@ if @opt@ is @Just a@,
--- otherwise @f_nothing ()@.
-map_or_else :: (a -> b) -> (() -> b) -> Maybe a -> b
-map_or_else f_just f_nothing opt =
+-- | @mapOrElse fJust fNothing@ returns @fJust a@ if @opt@ is @Just a@,
+-- otherwise @fNothing ()@.
+mapOrElse :: (a -> b) -> (() -> b) -> Maybe a -> b
+mapOrElse fJust fNothing opt =
   case opt of
-    Just a -> f_just a
-    Nothing -> f_nothing ()
+    Just a -> fJust a
+    Nothing -> fNothing ()
 
--- | @unwrap_or def opt@ returns @a@ if @opt@ is @Just a@, otherwise @def@.
-unwrap_or :: a -> Maybe a -> a
-unwrap_or def opt =
+-- | @unwrapOr def opt@ returns @a@ if @opt@ is @Just a@, otherwise @def@.
+unwrapOr :: a -> Maybe a -> a
+unwrapOr def opt =
   case opt of
     Just a -> a
     Nothing -> def
 
--- | @unwrap_or_else f opt@ returns @a@ if @opt@ is @Just a@, otherwise @f ()@.
-unwrap_or_else :: (() -> a) -> Maybe a -> a
-unwrap_or_else f opt =
+-- | @unwrapOrElse f opt@ returns @a@ if @opt@ is @Just a@, otherwise @f ()@.
+unwrapOrElse :: (() -> a) -> Maybe a -> a
+unwrapOrElse f opt =
   case opt of
     Just a -> a
     Nothing -> f ()
@@ -180,23 +179,23 @@ expect msg opt =
     Just a -> a
     Nothing -> error msg
 
--- | @expect_with f opt@ returns @a@ if @opt@ is @Just a@, otherwise an `error`
+-- | @expectWith f opt@ returns @a@ if @opt@ is @Just a@, otherwise an `error`
 -- is thrown with message @f ()@.
-expect_with :: (() -> String) -> Maybe a -> a
-expect_with f opt =
+expectWith :: (() -> String) -> Maybe a -> a
+expectWith f opt =
   case opt of
     Just a -> a
     Nothing -> error $ f ()
 
--- | @collect_list items@ returns @Just [its]@ if all elements of @items@ are
--- @Just _@, otherwise @Nothing@.
-collect_list :: [Maybe a] -> Maybe [a]
-collect_list items =
+-- | @collectList items@ returns @Just [its]@ if all elements of @items@ are
+-- @Just @, otherwise @Nothing@.
+collectList :: [Maybe a] -> Maybe [a]
+collectList items =
   case items of
     [] -> Just []
     Nothing : _ -> Nothing
     (Just item) : rest ->
-      case collect_list rest of
+      case collectList rest of
         Nothing -> Nothing
-        Just rec_res -> Just (item : rec_res)
+        Just recRes -> Just (item : recRes)
 

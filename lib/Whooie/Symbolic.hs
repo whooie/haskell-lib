@@ -2,73 +2,72 @@
 
 -- Implements very simple symbolic math on the field of real numbers.
 module Whooie.Symbolic
-  (
-    S(..),
-    const_e,
-    const_frac_1_pi,
-    const_frac_1_sqrt_2,
-    const_frac_2_pi,
-    const_frac_2_sqrt_pi,
-    const_frac_pi_2,
-    const_frac_pi_3,
-    const_frac_pi_4,
-    const_frac_pi_6,
-    const_frac_pi_8,
-    const_ln_2,
-    const_ln_10,
-    const_log2_10,
-    const_log2_e,
-    const_log10_2,
-    const_log10_e,
-    const_pi,
-    const_sqrt_2,
-    const_tau,
-    cmp,
-    is_literal,
-    is_symbol,
-    is_neg,
-    is_abs,
-    is_sign,
-    is_add,
-    is_sub,
-    is_mul,
-    is_div,
-    is_sqrt,
-    is_sin,
-    is_cos,
-    is_tan,
-    is_asin,
-    is_acos,
-    is_atan,
-    is_sinh,
-    is_cosh,
-    is_tanh,
-    is_asinh,
-    is_acosh,
-    is_atanh,
-    is_pow,
-    is_exp,
-    is_log,
-    is_ln,
-    is_atom,
-    contains,
-    get_symbols,
-    get_atoms,
-    diff,
-    reval,
-    subs_single,
-    subs,
-    subsf_single,
-    subsf,
-    Error(..),
-    Result,
-    evalf_single,
-    evalf,
-    to_string,
-    to_string_haskell,
-    to_string_rust,
-    to_string_python,
-    to_string_numpy,
+  ( S (..)
+  , constE
+  , constFrac1Pi
+  , constFrac1Sqrt2
+  , constFrac2Pi
+  , constFrac2SqrtPi
+  , constFracPi2
+  , constFracPi3
+  , constFracPi4
+  , constFracPi6
+  , constFracPi8
+  , constLn2
+  , constLn10
+  , constLog210
+  , constLog2E
+  , constLog102
+  , constLog10E
+  , constPi
+  , constSqrt2
+  , constTau
+  , cmp
+  , isLiteral
+  , isSymbol
+  , isNeg
+  , isAbs
+  , isSign
+  , isAdd
+  , isSub
+  , isMul
+  , isDiv
+  , isSqrt
+  , isSin
+  , isCos
+  , isTan
+  , isAsin
+  , isAcos
+  , isAtan
+  , isSinh
+  , isCosh
+  , isTanh
+  , isAsinh
+  , isAcosh
+  , isAtanh
+  , isPow
+  , isExp
+  , isLog
+  , isLn
+  , isAtom
+  , contains
+  , getSymbols
+  , getAtoms
+  , diff
+  , reval
+  , subsSingle
+  , subs
+  , subsfSingle
+  , subsf
+  , Error (..)
+  , Result
+  , evalfSingle
+  , evalf
+  , toString
+  , toStringHaskell
+  , toStringRust
+  , toStringPython
+  , toStringNumpy
   ) where
 
 import Text.Printf (printf)
@@ -108,80 +107,80 @@ data S =
   | Ln S
 
 -- | Euler's number (e)
-const_e :: S
-const_e = Literal 2.718281828459045
+constE :: S
+constE = Literal 2.718281828459045
 
 -- | 1/π
-const_frac_1_pi :: S
-const_frac_1_pi = Literal 0.3183098861837907
+constFrac1Pi :: S
+constFrac1Pi = Literal 0.3183098861837907
 
 -- | 1/√2
-const_frac_1_sqrt_2 :: S
-const_frac_1_sqrt_2 = Literal 0.7071067811865476
+constFrac1Sqrt2 :: S
+constFrac1Sqrt2 = Literal 0.7071067811865476
 
 -- | 2/π
-const_frac_2_pi :: S
-const_frac_2_pi = Literal 0.6366197723675814
+constFrac2Pi :: S
+constFrac2Pi = Literal 0.6366197723675814
 
 -- | 2/√π
-const_frac_2_sqrt_pi :: S
-const_frac_2_sqrt_pi = Literal 1.1283791670955126
+constFrac2SqrtPi :: S
+constFrac2SqrtPi = Literal 1.1283791670955126
 
 -- | π/2
-const_frac_pi_2 :: S
-const_frac_pi_2 = Literal 1.5707963267948966
+constFracPi2 :: S
+constFracPi2 = Literal 1.5707963267948966
 
 -- | π/3
-const_frac_pi_3 :: S
-const_frac_pi_3 = Literal 1.0471975511965979
+constFracPi3 :: S
+constFracPi3 = Literal 1.0471975511965979
 
 -- | π/4
-const_frac_pi_4 :: S
-const_frac_pi_4 = Literal 0.7853981633974483
+constFracPi4 :: S
+constFracPi4 = Literal 0.7853981633974483
 
 -- | π/6
-const_frac_pi_6 :: S
-const_frac_pi_6 = Literal 0.5235987755982989
+constFracPi6 :: S
+constFracPi6 = Literal 0.5235987755982989
 
 -- | π/8
-const_frac_pi_8 :: S
-const_frac_pi_8 = Literal 0.39269908169872414
+constFracPi8 :: S
+constFracPi8 = Literal 0.39269908169872414
 
 -- | ln(2)
-const_ln_2 :: S
-const_ln_2 = Literal 0.6931471805599453
+constLn2 :: S
+constLn2 = Literal 0.6931471805599453
 
 -- | ln(10)
-const_ln_10 :: S
-const_ln_10 = Literal 2.302585092994046
+constLn10 :: S
+constLn10 = Literal 2.302585092994046
 
--- | log_2(10)
-const_log2_10 :: S
-const_log2_10 = Literal 3.321928094887362
+-- | log2(10)
+constLog210 :: S
+constLog210 = Literal 3.321928094887362
 
--- | log_2(e)
-const_log2_e :: S
-const_log2_e = Literal 1.4426950408889634
+-- | log2(e)
+constLog2E :: S
+constLog2E = Literal 1.4426950408889634
 
--- | log_10(2)
-const_log10_2 :: S
-const_log10_2 = Literal 0.3010299956639812
+-- | log10(2)
+constLog102 :: S
+constLog102 = Literal 0.3010299956639812
 
--- | log_10(e)
-const_log10_e :: S
-const_log10_e = Literal 0.4342944819032518
+-- | log10(e)
+constLog10E :: S
+constLog10E = Literal 0.4342944819032518
 
 -- | Archimedes' constant (π)
-const_pi :: S
-const_pi = Literal 3.141592653589793
+constPi :: S
+constPi = Literal 3.141592653589793
 
 -- | √2
-const_sqrt_2 :: S
-const_sqrt_2 = Literal 1.4142135623730951
+constSqrt2 :: S
+constSqrt2 = Literal 1.4142135623730951
 
 -- | Full circle constant (τ)
-const_tau :: S
-const_tau = Literal 6.283185307179586
+constTau :: S
+constTau = Literal 6.283185307179586
 
 instance Eq S where
   -- | Two expressions are equal only if:
@@ -226,7 +225,7 @@ cmp :: S -> S -> Maybe Ordering
 cmp l r =
   case (l, r) of
     (Literal lf, Literal rf) -> Just (compare lf rf)
-    (l_, r_) -> if l_ == r_ then Just EQ else Nothing
+    (l, r) -> if l == r then Just EQ else Nothing
 
 instance Num S where
   fromInteger = Literal . fromInteger
@@ -304,9 +303,9 @@ instance Num S where
       (l, Neg r) -> negate (l * r)
       (Neg l, r) -> negate (l * r)
       (Exp el, Exp er) -> exp (el + er)
-      (Exp el, Pow br er) | br == const_e -> exp (el + er)
+      (Exp el, Pow br er) | br == constE -> exp (el + er)
       (Exp el, Pow br er) -> Mul (exp el) (br ** er)
-      (Pow bl el, Exp er) | bl == const_e -> exp (el + er)
+      (Pow bl el, Exp er) | bl == constE -> exp (el + er)
       (Pow bl el, Exp er) -> Mul (bl ** el) (exp er)
       (Pow bl el, Pow br er) | bl == br -> bl ** (el + er)
       (Pow bl el, Pow br er) -> Mul (bl ** el) (br ** er)
@@ -335,9 +334,9 @@ instance Fractional S where
       (l, Neg r) -> negate (l / r)
       (Neg l, r) -> negate (l / r)
       (Exp el, Exp er) -> exp (el - er)
-      (Exp el, Pow br er) | const_e == br -> exp (el - er)
+      (Exp el, Pow br er) | constE == br -> exp (el - er)
       (Exp el, Pow br er) -> Div (exp el) (br ** er)
-      (Pow bl el, Exp er) | bl == const_e -> exp (el - er)
+      (Pow bl el, Exp er) | bl == constE -> exp (el - er)
       (Pow bl _ , Exp er) -> Div (bl ** er) (exp er)
       (Pow bl el, Pow br er) | bl == br -> bl ** (el - er)
       (Pow bl el, Pow br er) -> Div (bl ** el) (br ** er)
@@ -359,7 +358,7 @@ instance Fractional S where
   recip x = (Literal 1.0) / x
 
 instance Floating S where
-  pi = const_pi
+  pi = constPi
   sqrt x =
     case x of
       Literal x -> Literal (sqrt x)
@@ -416,12 +415,12 @@ instance Floating S where
   b ** e =
     case (b, e) of
       (Literal b, Literal e) -> Literal (b ** e)
-      (Literal b, e) | (Literal b) == const_e -> exp e
+      (Literal b, e) | (Literal b) == constE -> exp e
       (Literal b, e) -> Pow (Literal b) e
       (Sqrt b, e) -> b ** (e / (Literal 2.0))
       (b, Log eb ex) | b == eb -> ex
       (b, Log eb ex) -> Pow b (logBase eb ex)
-      (b, Ln ex) | b == const_e -> ex
+      (b, Ln ex) | b == constE -> ex
       (b, Ln ex) -> Pow b (log ex)
       (_, Literal e) | e == 0.0 -> Literal 1.0
       (b, Literal e) | e == 0.5 -> sqrt b
@@ -431,216 +430,216 @@ instance Floating S where
       (b, Literal e) -> Pow b (Literal e)
       (b, e) -> Pow b e
   exp x =
-    case  x of
+    case x of
       Literal x -> Literal (exp x)
-      Log b e | b == const_e -> e
+      Log b e | b == constE -> e
       Ln e -> e
       x -> Exp x
   logBase b x =
     case (b, x) of
       (Literal b, Literal x) -> Literal ((log x) / (log b))
-      (Literal b, x) | Literal b == const_e -> log x
+      (Literal b, x) | Literal b == constE -> log x
       (Literal b, x) -> Log (Literal b) x
       (b, Sqrt x) -> (Literal 0.5) * (logBase b x)
       (b, Pow bb be) | bb == b -> be
       (b, Pow bb be) -> be * (Log b bb)
-      (b, Exp be) | const_e == b -> be
-      (b, Exp be) -> be * (Log b const_e)
+      (b, Exp be) | constE == b -> be
+      (b, Exp be) -> be * (Log b constE)
       (b, e) -> Log b e
   log x =
     case x of
       Literal x -> Literal (log x)
       Sqrt x -> (Literal 0.5) * (log x)
-      Pow b e | b == const_e -> e
+      Pow b e | b == constE -> e
       Pow b e -> e * (Ln b)
       Exp e -> e
       x -> Ln x
 
--- | @is_literal expr@ returns @True@ if @expr@ is `Literal`.
-is_literal :: S -> Bool
-is_literal expr =
+-- | @isLiteral expr@ returns @True@ if @expr@ is `Literal`.
+isLiteral :: S -> Bool
+isLiteral expr =
   case expr of
     Literal _ -> True
     _ -> False
 
--- | @is_symbol expr@ returns @True@ if @expr@ is `Symbol`.
-is_symbol :: S -> Bool
-is_symbol expr =
+-- | @isSymbol expr@ returns @True@ if @expr@ is `Symbol`.
+isSymbol :: S -> Bool
+isSymbol expr =
   case expr of
     Symbol _ -> True
     _ -> False
 
--- | @is_neg expr@ returns @True@ if @expr@ is `Neg`.
-is_neg :: S -> Bool
-is_neg expr =
+-- | @isNeg expr@ returns @True@ if @expr@ is `Neg`.
+isNeg :: S -> Bool
+isNeg expr =
   case expr of
     Neg _ -> True
     _ -> False
 
--- | @is_abs expr@ returns @True@ if @expr@ is `Abs`.
-is_abs :: S -> Bool
-is_abs expr =
+-- | @isAbs expr@ returns @True@ if @expr@ is `Abs`.
+isAbs :: S -> Bool
+isAbs expr =
   case expr of
     Abs _ -> True
     _ -> False
 
--- | @is_sign expr@ returns @True@ if @expr@ is `Sign`.
-is_sign :: S -> Bool
-is_sign expr =
+-- | @isSign expr@ returns @True@ if @expr@ is `Sign`.
+isSign :: S -> Bool
+isSign expr =
   case expr of
     Sign _ -> True
     _ -> False
 
--- | @is_add expr@ returns @True@ if @expr@ is `Add`.
-is_add :: S -> Bool
-is_add expr =
+-- | @isAdd expr@ returns @True@ if @expr@ is `Add`.
+isAdd :: S -> Bool
+isAdd expr =
   case expr of
     Add _ _ -> True
     _ -> False
 
--- | @is_sub expr@ returns @True@ if @expr@ is `Sub`.
-is_sub :: S -> Bool
-is_sub expr =
+-- | @isSub expr@ returns @True@ if @expr@ is `Sub`.
+isSub :: S -> Bool
+isSub expr =
   case expr of
     Sub _ _ -> True
     _ -> False
 
--- | @is_mul expr@ returns @True@ if @expr@ is `Mul`.
-is_mul :: S -> Bool
-is_mul expr =
+-- | @isMul expr@ returns @True@ if @expr@ is `Mul`.
+isMul :: S -> Bool
+isMul expr =
   case expr of
     Mul _ _ -> True
     _ -> False
 
--- | @is_div expr@ returns @True@ if @expr@ is `Div`.
-is_div :: S -> Bool
-is_div expr =
+-- | @isDiv expr@ returns @True@ if @expr@ is `Div`.
+isDiv :: S -> Bool
+isDiv expr =
   case expr of
     Div _ _ -> True
     _ -> False
 
--- | @is_sqrt expr@ returns @True@ if @expr@ is `Sqrt`.
-is_sqrt :: S -> Bool
-is_sqrt expr =
+-- | @isSqrt expr@ returns @True@ if @expr@ is `Sqrt`.
+isSqrt :: S -> Bool
+isSqrt expr =
   case expr of
     Sqrt _ -> True
     _ -> False
 
--- | @is_sin expr@ returns @True@ if @expr@ is `Sin`.
-is_sin :: S -> Bool
-is_sin expr =
+-- | @isSin expr@ returns @True@ if @expr@ is `Sin`.
+isSin :: S -> Bool
+isSin expr =
   case expr of
     Sin _ -> True
     _ -> False
 
--- | @is_cos expr@ returns @True@ if @expr@ is `Cos`.
-is_cos :: S -> Bool
-is_cos expr =
+-- | @isCos expr@ returns @True@ if @expr@ is `Cos`.
+isCos :: S -> Bool
+isCos expr =
   case expr of
     Cos _ -> True
     _ -> False
 
--- | @is_tan expr@ returns @True@ if @expr@ is `Tan`.
-is_tan :: S -> Bool
-is_tan expr =
+-- | @isTan expr@ returns @True@ if @expr@ is `Tan`.
+isTan :: S -> Bool
+isTan expr =
   case expr of
     Tan _ -> True
     _ -> False
 
--- | @is_asin expr@ returns @True@ if @expr@ is `Asin`.
-is_asin :: S -> Bool
-is_asin expr =
+-- | @isAsin expr@ returns @True@ if @expr@ is `Asin`.
+isAsin :: S -> Bool
+isAsin expr =
   case expr of
     ASin _ -> True
     _ -> False
 
--- | @is_acos expr@ returns @True@ if @expr@ is `Acos`.
-is_acos :: S -> Bool
-is_acos expr =
+-- | @isAcos expr@ returns @True@ if @expr@ is `Acos`.
+isAcos :: S -> Bool
+isAcos expr =
   case expr of
     ACos _ -> True
     _ -> False
 
--- | @is_atan expr@ returns @True@ if @expr@ is `Atan`.
-is_atan :: S -> Bool
-is_atan expr =
+-- | @isAtan expr@ returns @True@ if @expr@ is `Atan`.
+isAtan :: S -> Bool
+isAtan expr =
   case expr of
     ATan _ -> True
     _ -> False
 
--- | @is_sinh expr@ returns @True@ if @expr@ is `Sinh`.
-is_sinh :: S -> Bool
-is_sinh expr =
+-- | @isSinh expr@ returns @True@ if @expr@ is `Sinh`.
+isSinh :: S -> Bool
+isSinh expr =
   case expr of
     Sinh _ -> True
     _ -> False
 
--- | @is_cosh expr@ returns @True@ if @expr@ is `Cosh`.
-is_cosh :: S -> Bool
-is_cosh expr =
+-- | @isCosh expr@ returns @True@ if @expr@ is `Cosh`.
+isCosh :: S -> Bool
+isCosh expr =
   case expr of
     Cosh _ -> True
     _ -> False
 
--- | @is_tanh expr@ returns @True@ if @expr@ is `Tanh`.
-is_tanh :: S -> Bool
-is_tanh expr =
+-- | @isTanh expr@ returns @True@ if @expr@ is `Tanh`.
+isTanh :: S -> Bool
+isTanh expr =
   case expr of
     Tanh _ -> True
     _ -> False
 
--- | @is_asinh expr@ returns @True@ if @expr@ is `Asinh`.
-is_asinh :: S -> Bool
-is_asinh expr =
+-- | @isAsinh expr@ returns @True@ if @expr@ is `Asinh`.
+isAsinh :: S -> Bool
+isAsinh expr =
   case expr of
     ASinh _ -> True
     _ -> False
 
--- | @is_acosh expr@ returns @True@ if @expr@ is `Acosh`.
-is_acosh :: S -> Bool
-is_acosh expr =
+-- | @isAcosh expr@ returns @True@ if @expr@ is `Acosh`.
+isAcosh :: S -> Bool
+isAcosh expr =
   case expr of
     ACosh _ -> True
     _ -> False
 
--- | @is_atanh expr@ returns @True@ if @expr@ is `Atanh`.
-is_atanh :: S -> Bool
-is_atanh expr =
+-- | @isAtanh expr@ returns @True@ if @expr@ is `Atanh`.
+isAtanh :: S -> Bool
+isAtanh expr =
   case expr of
     ATanh _ -> True
     _ -> False
 
--- | @is_pow expr@ returns @True@ if @expr@ is `Pow`.
-is_pow :: S -> Bool
-is_pow expr =
+-- | @isPow expr@ returns @True@ if @expr@ is `Pow`.
+isPow :: S -> Bool
+isPow expr =
   case expr of
     Pow _ _ -> True
     _ -> False
 
--- | @is_exp expr@ returns @True@ if @expr@ is `Exp`.
-is_exp :: S -> Bool
-is_exp expr =
+-- | @isExp expr@ returns @True@ if @expr@ is `Exp`.
+isExp :: S -> Bool
+isExp expr =
   case expr of
     Exp _ -> True
     _ -> False
 
--- | @is_log expr@ returns @True@ if @expr@ is `Log`.
-is_log :: S -> Bool
-is_log expr =
+-- | @isLog expr@ returns @True@ if @expr@ is `Log`.
+isLog :: S -> Bool
+isLog expr =
   case expr of
     Log _ _ -> True
     _ -> False
 
--- | @is_ln expr@ returns @True@ if @expr@ is `Ln`.
-is_ln :: S -> Bool
-is_ln expr =
+-- | @isLn expr@ returns @True@ if @expr@ is `Ln`.
+isLn :: S -> Bool
+isLn expr =
   case expr of
     Ln _ -> True
     _ -> False
 
--- | @is_atom expr@ returns @True@ if @expr@ is either `Literal` or `Symbol`.
-is_atom :: S -> Bool
-is_atom expr = is_literal expr || is_symbol expr
+-- | @isAtom expr@ returns @True@ if @expr@ is either `Literal` or `Symbol`.
+isAtom :: S -> Bool
+isAtom expr = isLiteral expr || isSymbol expr
 
 -- | @contains expr subexpr@ returns @True@ if @expr@ contains at least one
 -- instance of @subexpr@, verbatim.
@@ -677,75 +676,75 @@ contains expr subexpr =
       Log b x -> contains b subexpr || contains x subexpr
       Ln x -> contains x subexpr
 
-get_symbols_inner :: S -> [S] -> [S]
-get_symbols_inner expr acc =
+getSymbolsInner :: S -> [S] -> [S]
+getSymbolsInner expr acc =
   case expr of
     Literal _ -> acc
     Symbol _ -> if expr `elem` acc then acc else expr : acc
-    Neg x -> get_symbols_inner x acc
-    Abs x -> get_symbols_inner x acc
-    Sign x -> get_symbols_inner x acc
-    Add l r -> get_symbols_inner l $ get_symbols_inner r acc
-    Sub l r -> get_symbols_inner l $ get_symbols_inner r acc
-    Mul l r -> get_symbols_inner l $ get_symbols_inner r acc
-    Div l r -> get_symbols_inner l $ get_symbols_inner r acc
-    Sqrt x -> get_symbols_inner x acc
-    Sin x -> get_symbols_inner x acc
-    Cos x -> get_symbols_inner x acc
-    Tan x -> get_symbols_inner x acc
-    ASin x -> get_symbols_inner x acc
-    ACos x -> get_symbols_inner x acc
-    ATan x -> get_symbols_inner x acc
-    Sinh x -> get_symbols_inner x acc
-    Cosh x -> get_symbols_inner x acc
-    Tanh x -> get_symbols_inner x acc
-    ASinh x -> get_symbols_inner x acc
-    ACosh x -> get_symbols_inner x acc
-    ATanh x -> get_symbols_inner x acc
-    Pow b e -> get_symbols_inner b $ get_symbols_inner e acc
-    Exp x -> get_symbols_inner x acc
-    Log b x -> get_symbols_inner b $ get_symbols_inner x acc
-    Ln x -> get_symbols_inner x acc
+    Neg x -> getSymbolsInner x acc
+    Abs x -> getSymbolsInner x acc
+    Sign x -> getSymbolsInner x acc
+    Add l r -> getSymbolsInner l $ getSymbolsInner r acc
+    Sub l r -> getSymbolsInner l $ getSymbolsInner r acc
+    Mul l r -> getSymbolsInner l $ getSymbolsInner r acc
+    Div l r -> getSymbolsInner l $ getSymbolsInner r acc
+    Sqrt x -> getSymbolsInner x acc
+    Sin x -> getSymbolsInner x acc
+    Cos x -> getSymbolsInner x acc
+    Tan x -> getSymbolsInner x acc
+    ASin x -> getSymbolsInner x acc
+    ACos x -> getSymbolsInner x acc
+    ATan x -> getSymbolsInner x acc
+    Sinh x -> getSymbolsInner x acc
+    Cosh x -> getSymbolsInner x acc
+    Tanh x -> getSymbolsInner x acc
+    ASinh x -> getSymbolsInner x acc
+    ACosh x -> getSymbolsInner x acc
+    ATanh x -> getSymbolsInner x acc
+    Pow b e -> getSymbolsInner b $ getSymbolsInner e acc
+    Exp x -> getSymbolsInner x acc
+    Log b x -> getSymbolsInner b $ getSymbolsInner x acc
+    Ln x -> getSymbolsInner x acc
 
--- | @get_symbols expr@ returns a list of all the unique `Symbol`s contained by
+-- | @getSymbols expr@ returns a list of all the unique `Symbol`s contained by
 -- @expr@.
-get_symbols :: S -> [S]
-get_symbols expr = get_symbols_inner expr []
+getSymbols :: S -> [S]
+getSymbols expr = getSymbolsInner expr []
 
-get_atoms_inner :: S -> [S] -> [S]
-get_atoms_inner expr acc =
+getAtomsInner :: S -> [S] -> [S]
+getAtomsInner expr acc =
   case expr of
     Literal _ -> if expr `elem` acc then acc else expr : acc
     Symbol _ -> if expr `elem` acc then acc else expr : acc
-    Neg x -> get_atoms_inner x acc
-    Abs x -> get_atoms_inner x acc
-    Sign x -> get_atoms_inner x acc
-    Add l r -> get_atoms_inner l $ get_atoms_inner r acc
-    Sub l r -> get_atoms_inner l $ get_atoms_inner r acc
-    Mul l r -> get_atoms_inner l $ get_atoms_inner r acc
-    Div l r -> get_atoms_inner l $ get_atoms_inner r acc
-    Sqrt x -> get_atoms_inner x acc
-    Sin x -> get_atoms_inner x acc
-    Cos x -> get_atoms_inner x acc
-    Tan x -> get_atoms_inner x acc
-    ASin x -> get_atoms_inner x acc
-    ACos x -> get_atoms_inner x acc
-    ATan x -> get_atoms_inner x acc
-    Sinh x -> get_atoms_inner x acc
-    Cosh x -> get_atoms_inner x acc
-    Tanh x -> get_atoms_inner x acc
-    ASinh x -> get_atoms_inner x acc
-    ACosh x -> get_atoms_inner x acc
-    ATanh x -> get_atoms_inner x acc
-    Pow b e -> get_atoms_inner b $ get_atoms_inner e acc
-    Exp x -> get_atoms_inner x acc
-    Log b x -> get_atoms_inner b $ get_atoms_inner x acc
-    Ln x -> get_atoms_inner x acc
+    Neg x -> getAtomsInner x acc
+    Abs x -> getAtomsInner x acc
+    Sign x -> getAtomsInner x acc
+    Add l r -> getAtomsInner l $ getAtomsInner r acc
+    Sub l r -> getAtomsInner l $ getAtomsInner r acc
+    Mul l r -> getAtomsInner l $ getAtomsInner r acc
+    Div l r -> getAtomsInner l $ getAtomsInner r acc
+    Sqrt x -> getAtomsInner x acc
+    Sin x -> getAtomsInner x acc
+    Cos x -> getAtomsInner x acc
+    Tan x -> getAtomsInner x acc
+    ASin x -> getAtomsInner x acc
+    ACos x -> getAtomsInner x acc
+    ATan x -> getAtomsInner x acc
+    Sinh x -> getAtomsInner x acc
+    Cosh x -> getAtomsInner x acc
+    Tanh x -> getAtomsInner x acc
+    ASinh x -> getAtomsInner x acc
+    ACosh x -> getAtomsInner x acc
+    ATanh x -> getAtomsInner x acc
+    Pow b e -> getAtomsInner b $ getAtomsInner e acc
+    Exp x -> getAtomsInner x acc
+    Log b x -> getAtomsInner b $ getAtomsInner x acc
+    Ln x -> getAtomsInner x acc
 
--- | @get_atoms expr@ returns a list of all the unique `Symbol`s or `Literal`s
+-- | @getAtoms expr@ returns a list of all the unique `Symbol`s or `Literal`s
 -- contained by @expr@.
-get_atoms :: S -> [S]
-get_atoms expr = get_atoms_inner expr []
+getAtoms :: S -> [S]
+getAtoms expr = getAtomsInner expr []
 
 -- | @diff var expr@ returns the partial derivative of @expr@ with respect to
 -- @var@.
@@ -819,13 +818,13 @@ reval expr =
     Log b x -> logBase (reval b) (reval x)
     Ln x -> log (reval x)
 
--- | @subs_single target replace expr@ replaces all instances of @target@ within
+-- | @subsSingle target replace expr@ replaces all instances of @target@ within
 -- @expr@ with @replace@ and re-evaluate all sub-expressions.
 --
 -- @target@ must be matched verbatim in order for the substitution to be made.
-subs_single :: S -> S -> S -> S
-subs_single target replace expr =
-  let do_subs = subs_single target replace
+subsSingle :: S -> S -> S -> S
+subsSingle target replace expr =
+  let doSubs = subsSingle target replace
    in
     if expr == target then
       replace
@@ -833,45 +832,45 @@ subs_single target replace expr =
       case expr of
         Literal f -> Literal f
         Symbol s -> Symbol s
-        Neg x -> negate (do_subs x)
-        Abs x -> abs (do_subs x)
-        Sign x -> signum (do_subs x)
-        Add l r -> (do_subs l) + (do_subs r)
-        Sub l r -> (do_subs l) - (do_subs r)
-        Mul l r -> (do_subs l) * (do_subs r)
-        Div l r -> (do_subs l) / (do_subs r)
-        Sqrt x -> sqrt (do_subs x)
-        Sin x -> sin (do_subs x)
-        Cos x -> cos (do_subs x)
-        Tan x -> tan (do_subs x)
-        ASin x -> asin (do_subs x)
-        ACos x -> acos (do_subs x)
-        ATan x -> atan (do_subs x)
-        Sinh x -> sinh (do_subs x)
-        Cosh x -> cosh (do_subs x)
-        Tanh x -> tanh (do_subs x)
-        ASinh x -> asinh (do_subs x)
-        ACosh x -> acosh (do_subs x)
-        ATanh x -> atanh (do_subs x)
-        Pow b e -> (do_subs b) ** (do_subs e)
-        Exp x -> exp (do_subs x)
-        Log b x -> logBase (do_subs b) (do_subs x)
-        Ln x -> log (do_subs x)
+        Neg x -> negate (doSubs x)
+        Abs x -> abs (doSubs x)
+        Sign x -> signum (doSubs x)
+        Add l r -> (doSubs l) + (doSubs r)
+        Sub l r -> (doSubs l) - (doSubs r)
+        Mul l r -> (doSubs l) * (doSubs r)
+        Div l r -> (doSubs l) / (doSubs r)
+        Sqrt x -> sqrt (doSubs x)
+        Sin x -> sin (doSubs x)
+        Cos x -> cos (doSubs x)
+        Tan x -> tan (doSubs x)
+        ASin x -> asin (doSubs x)
+        ACos x -> acos (doSubs x)
+        ATan x -> atan (doSubs x)
+        Sinh x -> sinh (doSubs x)
+        Cosh x -> cosh (doSubs x)
+        Tanh x -> tanh (doSubs x)
+        ASinh x -> asinh (doSubs x)
+        ACosh x -> acosh (doSubs x)
+        ATanh x -> atanh (doSubs x)
+        Pow b e -> (doSubs b) ** (doSubs e)
+        Exp x -> exp (doSubs x)
+        Log b x -> logBase (doSubs b) (doSubs x)
+        Ln x -> log (doSubs x)
 
 -- | Make a series of substitutions and re-evaluate all sub-expressions.
 subs :: [(S, S)] -> S -> S
 subs ss expr =
   case ss of
     [] -> expr
-    (target, replace) : rest -> subs rest $ subs_single target replace expr
+    (target, replace) : rest -> subs rest $ subsSingle target replace expr
 
--- | @subsf_single target replace expr@ replaces all instances of @target@
+-- | @subsfSingle target replace expr@ replaces all instances of @target@
 -- within @expr@ with @replace@ and re-evaluate all sub-expressions.
 --
 -- @target@ must be matched verbatim in order for the subtitition to be made.
-subsf_single :: S -> Float -> S -> S
-subsf_single target replace expr =
-  let do_subs = subsf_single target replace
+subsfSingle :: S -> Float -> S -> S
+subsfSingle target replace expr =
+  let doSubs = subsfSingle target replace
    in
     if expr == target then
       Literal replace
@@ -879,37 +878,37 @@ subsf_single target replace expr =
       case expr of
         Literal f -> Literal f
         Symbol s -> Symbol s
-        Neg x -> negate (do_subs x)
-        Abs x -> abs (do_subs x)
-        Sign x -> signum (do_subs x)
-        Add l r -> (do_subs l) + (do_subs r)
-        Sub l r -> (do_subs l) - (do_subs r)
-        Mul l r -> (do_subs l) * (do_subs r)
-        Div l r -> (do_subs l) / (do_subs r)
-        Sqrt x -> sqrt (do_subs x)
-        Sin x -> sin (do_subs x)
-        Cos x -> cos (do_subs x)
-        Tan x -> tan (do_subs x)
-        ASin x -> asin (do_subs x)
-        ACos x -> acos (do_subs x)
-        ATan x -> atan (do_subs x)
-        Sinh x -> sinh (do_subs x)
-        Cosh x -> cosh (do_subs x)
-        Tanh x -> tanh (do_subs x)
-        ASinh x -> asinh (do_subs x)
-        ACosh x -> acosh (do_subs x)
-        ATanh x -> atanh (do_subs x)
-        Pow b e -> (do_subs b) ** (do_subs e)
-        Exp x -> exp (do_subs x)
-        Log b x -> logBase (do_subs b) (do_subs x)
-        Ln x -> log (do_subs x)
+        Neg x -> negate (doSubs x)
+        Abs x -> abs (doSubs x)
+        Sign x -> signum (doSubs x)
+        Add l r -> (doSubs l) + (doSubs r)
+        Sub l r -> (doSubs l) - (doSubs r)
+        Mul l r -> (doSubs l) * (doSubs r)
+        Div l r -> (doSubs l) / (doSubs r)
+        Sqrt x -> sqrt (doSubs x)
+        Sin x -> sin (doSubs x)
+        Cos x -> cos (doSubs x)
+        Tan x -> tan (doSubs x)
+        ASin x -> asin (doSubs x)
+        ACos x -> acos (doSubs x)
+        ATan x -> atan (doSubs x)
+        Sinh x -> sinh (doSubs x)
+        Cosh x -> cosh (doSubs x)
+        Tanh x -> tanh (doSubs x)
+        ASinh x -> asinh (doSubs x)
+        ACosh x -> acosh (doSubs x)
+        ATanh x -> atanh (doSubs x)
+        Pow b e -> (doSubs b) ** (doSubs e)
+        Exp x -> exp (doSubs x)
+        Log b x -> logBase (doSubs b) (doSubs x)
+        Ln x -> log (doSubs x)
 
 -- | Make a series of substititions and re-evaluate all sub-expressions.
 subsf :: [(S, Float)] -> S -> S
 subsf ss expr =
   case ss of
     [] -> expr
-    (target, replace) : rest -> subsf rest $ subsf_single target replace expr
+    (target, replace) : rest -> subsf rest $ subsfSingle target replace expr
 
 -- | Returned by @evalf*@ functions.
 data Error = EvalfError [S]
@@ -917,16 +916,16 @@ data Error = EvalfError [S]
 -- | Alias for @Either 'Error' a@.
 type Result a = Either Error a
 
--- | @evalf_single target replace expr@ replaces all instances of @target@
+-- | @evalfSingle target replace expr@ replaces all instances of @target@
 -- within @expr@ with @replace@ and attempt to re-evaluate to a single @Float@.
 --
 -- @Error syms@ is returned if there are any symbols remaining, where @syms@ is
 -- a list of all such unique symbols.
-evalf_single :: S -> Float -> S -> Result Float
-evalf_single target replace expr =
-  case subsf_single target replace expr of
+evalfSingle :: S -> Float -> S -> Result Float
+evalfSingle target replace expr =
+  case subsfSingle target replace expr of
     Literal x -> Right x
-    x -> Left $ EvalfError (get_symbols x)
+    x -> Left $ EvalfError (getSymbols x)
 
 -- | Make a series of substitutions and attempt to re-evaluate to a single
 -- @Float@.
@@ -937,342 +936,342 @@ evalf :: [(S, Float)] -> S -> Result Float
 evalf ss expr =
   case subsf ss expr of
     Literal x -> Right x
-    x -> Left $ EvalfError (get_symbols x)
+    x -> Left $ EvalfError (getSymbols x)
 
--- | @to_string expr@ is a string representation of @expr@.
-to_string :: S -> String
-to_string expr =
+-- | @toString expr@ is a string representation of @expr@.
+toString :: S -> String
+toString expr =
   let
-    with_parens_if x tests =
+    withParensIf x tests =
       if foldl (\acc f -> acc || f x) False tests then
-        "(" ++ (to_string_inner "" x) ++ ")"
+        "(" ++ (toStringInner "" x) ++ ")"
       else
-        to_string_inner "" x
-    display_function fn_name x =
-      fn_name ++ "(" ++ (to_string_inner "" x) ++ ")"
-    to_string_inner acc x =
+        toStringInner "" x
+    displayFunction fnName x =
+      fnName ++ "(" ++ (toStringInner "" x) ++ ")"
+    toStringInner acc x =
       let
-        x_str =
+        xStr =
           case x of
             Literal f -> show f
             Symbol s -> s
-            Neg x -> "-" ++ (with_parens_if x [is_add, is_sub, is_neg])
-            Abs x -> "|" ++ (to_string_inner "" x) ++ "|"
-            Sign x -> display_function "sign" x
+            Neg x -> "-" ++ (withParensIf x [isAdd, isSub, isNeg])
+            Abs x -> "|" ++ (toStringInner "" x) ++ "|"
+            Sign x -> displayFunction "sign" x
             Add l (Neg r) ->
-              (to_string_inner "" l)
+              (toStringInner "" l)
               ++ " - "
-              ++ (with_parens_if r [is_add, is_sub, is_neg])
+              ++ (withParensIf r [isAdd, isSub, isNeg])
             Add l r ->
-              (to_string_inner "" l)
+              (toStringInner "" l)
               ++ " + "
-              ++ (with_parens_if r [is_neg])
+              ++ (withParensIf r [isNeg])
             Sub l (Neg r) ->
-              (to_string_inner "" l)
+              (toStringInner "" l)
               ++ " + "
-              ++ (with_parens_if r [is_neg])
+              ++ (withParensIf r [isNeg])
             Sub l r ->
-              (to_string_inner "" l)
+              (toStringInner "" l)
               ++ " - "
-              ++ (with_parens_if r [is_add, is_sub, is_neg])
+              ++ (withParensIf r [isAdd, isSub, isNeg])
             Mul l r ->
-              (with_parens_if l [is_add, is_sub])
+              (withParensIf l [isAdd, isSub])
               ++ " * "
-              ++ (with_parens_if r [is_add, is_sub])
+              ++ (withParensIf r [isAdd, isSub])
             Div l r ->
-              (with_parens_if l [is_add, is_sub])
+              (withParensIf l [isAdd, isSub])
               ++ " / "
-              ++ (with_parens_if r [is_add, is_sub, is_mul, is_div])
-            Sqrt x -> display_function "√" x
-            Sin x -> display_function "sin" x
-            Cos x -> display_function "cos" x
-            Tan x -> display_function "tan" x
-            ASin x -> display_function "arcsin" x
-            ACos x -> display_function "arccos" x
-            ATan x -> display_function "arctan" x
-            Sinh x -> display_function "sinh" x
-            Cosh x -> display_function "cosh" x
-            Tanh x -> display_function "tanh" x
-            ASinh x -> display_function "arsinh" x
-            ACosh x -> display_function "arcosh" x
-            ATanh x -> display_function "artanh" x
+              ++ (withParensIf r [isAdd, isSub, isMul, isDiv])
+            Sqrt x -> displayFunction "√" x
+            Sin x -> displayFunction "sin" x
+            Cos x -> displayFunction "cos" x
+            Tan x -> displayFunction "tan" x
+            ASin x -> displayFunction "arcsin" x
+            ACos x -> displayFunction "arccos" x
+            ATan x -> displayFunction "arctan" x
+            Sinh x -> displayFunction "sinh" x
+            Cosh x -> displayFunction "cosh" x
+            Tanh x -> displayFunction "tanh" x
+            ASinh x -> displayFunction "arsinh" x
+            ACosh x -> displayFunction "arcosh" x
+            ATanh x -> displayFunction "artanh" x
             Pow b e ->
-              (with_parens_if b [is_add, is_sub, is_mul, is_div, is_neg, is_pow])
+              (withParensIf b [isAdd, isSub, isMul, isDiv, isNeg, isPow])
               ++ "^"
-              ++ (with_parens_if e [is_add, is_sub, is_mul, is_div, is_neg, is_pow])
-            Exp x -> display_function "exp" x
+              ++ (withParensIf e [isAdd, isSub, isMul, isDiv, isNeg, isPow])
+            Exp x -> displayFunction "exp" x
             Log b x ->
-              "log_"
-              ++ (with_parens_if b [is_add, is_sub, is_mul, is_div, is_neg, is_pow])
-              ++ "(" ++ (to_string_inner "" x) ++ ")"
-            Ln x -> display_function "ln" x
-       in acc ++ x_str
-   in to_string_inner "" expr
+              "log"
+              ++ (withParensIf b [isAdd, isSub, isMul, isDiv, isNeg, isPow])
+              ++ "(" ++ (toStringInner "" x) ++ ")"
+            Ln x -> displayFunction "ln" x
+       in acc ++ xStr
+   in toStringInner "" expr
 
 instance Show S where
-  -- | Convert to a string using `to_string`.
-  show = to_string
+  -- | Convert to a string using `toString`.
+  show = toString
 
--- | @to_string_haskell expr@ is a Haskell representation of @expr@.
-to_string_haskell :: S -> String
-to_string_haskell expr =
+-- | @toStringHaskell expr@ is a Haskell representation of @expr@.
+toStringHaskell :: S -> String
+toStringHaskell expr =
   let
-    subexpr_str x =
+    subexprStr x =
       case x of
         Literal f -> if signum f < 0.0 then "(" ++ (show f) ++ ")" else show f
         Symbol s -> s
-        _ -> "(" ++ (to_string_inner "" x) ++ ")"
-    display_function fn_name arg =
-      fn_name ++ " " ++ (subexpr_str arg)
-    display_function2 fn_name arg1 arg2 =
-      fn_name ++ " " ++ (subexpr_str arg1) ++ " " ++ (subexpr_str arg2)
-    to_string_inner acc x =
+        _ -> "(" ++ (toStringInner "" x) ++ ")"
+    displayFunction fnName arg =
+      fnName ++ " " ++ (subexprStr arg)
+    displayFunction2 fnName arg1 arg2 =
+      fnName ++ " " ++ (subexprStr arg1) ++ " " ++ (subexprStr arg2)
+    toStringInner acc x =
       let
-        x_str =
+        xStr =
           case x of
             Literal f -> show f
             Symbol s -> s
-            Neg x -> display_function "negate" x
-            Abs x -> display_function "abs" x
-            Sign x -> display_function "signum" x
-            Add l (Neg r) -> (subexpr_str l) ++ " - " ++ (subexpr_str r)
-            Add l r -> (subexpr_str l) ++ " + " ++ (subexpr_str r)
-            Sub l (Neg r) -> (subexpr_str l) ++ " + " ++ (subexpr_str r)
-            Sub l r -> (subexpr_str l) ++ " - " ++ (subexpr_str r)
-            Mul l r -> (subexpr_str l) ++ " * " ++ (subexpr_str r)
-            Div l r -> (subexpr_str l) ++ " / " ++ (subexpr_str r)
-            Sqrt x -> display_function "sqrt" x
-            Sin x -> display_function "sin" x
-            Cos x -> display_function "cos" x
-            Tan x -> display_function "tan" x
-            ASin x -> display_function "asin" x
-            ACos x -> display_function "acos" x
-            ATan x -> display_function "atan" x
-            Sinh x -> display_function "sinh" x
-            Cosh x -> display_function "cosh" x
-            Tanh x -> display_function "tanh" x
-            ASinh x -> display_function "asinh" x
-            ACosh x -> display_function "acosh" x
-            ATanh x -> display_function "atanh" x
-            Pow b e -> (subexpr_str b) ++ " ** " ++ (subexpr_str e)
-            Exp x -> display_function "exp" x
-            Log b x -> display_function2 "logBase" b x
-            Ln x -> display_function "ln" x
-       in acc ++ x_str
-   in to_string_inner "" expr
+            Neg x -> displayFunction "negate" x
+            Abs x -> displayFunction "abs" x
+            Sign x -> displayFunction "signum" x
+            Add l (Neg r) -> (subexprStr l) ++ " - " ++ (subexprStr r)
+            Add l r -> (subexprStr l) ++ " + " ++ (subexprStr r)
+            Sub l (Neg r) -> (subexprStr l) ++ " + " ++ (subexprStr r)
+            Sub l r -> (subexprStr l) ++ " - " ++ (subexprStr r)
+            Mul l r -> (subexprStr l) ++ " * " ++ (subexprStr r)
+            Div l r -> (subexprStr l) ++ " / " ++ (subexprStr r)
+            Sqrt x -> displayFunction "sqrt" x
+            Sin x -> displayFunction "sin" x
+            Cos x -> displayFunction "cos" x
+            Tan x -> displayFunction "tan" x
+            ASin x -> displayFunction "asin" x
+            ACos x -> displayFunction "acos" x
+            ATan x -> displayFunction "atan" x
+            Sinh x -> displayFunction "sinh" x
+            Cosh x -> displayFunction "cosh" x
+            Tanh x -> displayFunction "tanh" x
+            ASinh x -> displayFunction "asinh" x
+            ACosh x -> displayFunction "acosh" x
+            ATanh x -> displayFunction "atanh" x
+            Pow b e -> (subexprStr b) ++ " ** " ++ (subexprStr e)
+            Exp x -> displayFunction "exp" x
+            Log b x -> displayFunction2 "logBase" b x
+            Ln x -> displayFunction "ln" x
+       in acc ++ xStr
+   in toStringInner "" expr
 
--- | @to_string_rust expr@ is a Rust representation of @expr@.
-to_string_rust :: S -> String
-to_string_rust expr =
+-- | @toStringRust expr@ is a Rust representation of @expr@.
+toStringRust :: S -> String
+toStringRust expr =
   let
-    with_parens_if x tests =
+    withParensIf x tests =
       if foldl (\acc f -> acc || f x) False tests then
-        "(" ++ (to_string_inner "" x) ++ ")"
+        "(" ++ (toStringInner "" x) ++ ")"
       else
-        to_string_inner "" x
-    display_function fn_name x =
-      (with_parens_if x [is_add, is_sub, is_mul, is_div, is_neg])
-      ++ "." ++ fn_name ++ "()"
-    to_string_inner acc x =
+        toStringInner "" x
+    displayFunction fnName x =
+      (withParensIf x [isAdd, isSub, isMul, isDiv, isNeg])
+      ++ "." ++ fnName ++ "()"
+    toStringInner acc x =
       let
-        x_str =
+        xStr =
           case x of
             Literal f -> show f
             Symbol s -> s
-            Neg x -> "-" ++ (with_parens_if x [is_add, is_sub, is_neg])
-            Abs x -> display_function "abs" x
-            Sign x -> display_function "signum" x
+            Neg x -> "-" ++ (withParensIf x [isAdd, isSub, isNeg])
+            Abs x -> displayFunction "abs" x
+            Sign x -> displayFunction "signum" x
             Add l (Neg r) ->
-              (to_string_inner "" l)
+              (toStringInner "" l)
               ++ " - "
-              ++ (with_parens_if r [is_add, is_sub, is_neg])
+              ++ (withParensIf r [isAdd, isSub, isNeg])
             Add l r ->
-              (to_string_inner "" l)
+              (toStringInner "" l)
               ++ " + "
-              ++ (with_parens_if r [is_neg])
+              ++ (withParensIf r [isNeg])
             Sub l (Neg r) ->
-              (to_string_inner "" l)
+              (toStringInner "" l)
               ++ " + "
-              ++ (with_parens_if r [is_neg])
+              ++ (withParensIf r [isNeg])
             Sub l r ->
-              (to_string_inner "" l)
+              (toStringInner "" l)
               ++ " - "
-              ++ (with_parens_if r [is_add, is_sub, is_neg])
+              ++ (withParensIf r [isAdd, isSub, isNeg])
             Mul l r ->
-              (with_parens_if l [is_add, is_sub])
+              (withParensIf l [isAdd, isSub])
               ++ " * "
-              ++ (with_parens_if r [is_add, is_sub])
+              ++ (withParensIf r [isAdd, isSub])
             Div l r ->
-              (with_parens_if l [is_add, is_sub])
+              (withParensIf l [isAdd, isSub])
               ++ " / "
-              ++ (with_parens_if r [is_add, is_sub, is_mul, is_div])
-            Sqrt x -> display_function "sqrt" x
-            Sin x -> display_function "sin" x
-            Cos x -> display_function "cos" x
-            Tan x -> display_function "tan" x
-            ASin x -> display_function "asin" x
-            ACos x -> display_function "acos" x
-            ATan x -> display_function "atan" x
-            Sinh x -> display_function "sinh" x
-            Cosh x -> display_function "cosh" x
-            Tanh x -> display_function "tanh" x
-            ASinh x -> display_function "asinh" x
-            ACosh x -> display_function "acosh" x
-            ATanh x -> display_function "atanh" x
+              ++ (withParensIf r [isAdd, isSub, isMul, isDiv])
+            Sqrt x -> displayFunction "sqrt" x
+            Sin x -> displayFunction "sin" x
+            Cos x -> displayFunction "cos" x
+            Tan x -> displayFunction "tan" x
+            ASin x -> displayFunction "asin" x
+            ACos x -> displayFunction "acos" x
+            ATan x -> displayFunction "atan" x
+            Sinh x -> displayFunction "sinh" x
+            Cosh x -> displayFunction "cosh" x
+            Tanh x -> displayFunction "tanh" x
+            ASinh x -> displayFunction "asinh" x
+            ACosh x -> displayFunction "acosh" x
+            ATanh x -> displayFunction "atanh" x
             Pow b e ->
-              (with_parens_if b [is_add, is_sub, is_mul, is_div, is_neg])
-              ++ ".powf(" ++ (to_string_inner "" e) ++ ")"
-            Exp x -> display_function "exp" x
+              (withParensIf b [isAdd, isSub, isMul, isDiv, isNeg])
+              ++ ".powf(" ++ (toStringInner "" e) ++ ")"
+            Exp x -> displayFunction "exp" x
             Log b x ->
-              (with_parens_if x [is_add, is_sub, is_mul, is_div, is_neg])
-              ++ ".log(" ++ (to_string_inner "" b) ++ ")"
-            Ln x -> display_function "ln" x
-       in acc ++ x_str
-   in to_string_inner "" expr
+              (withParensIf x [isAdd, isSub, isMul, isDiv, isNeg])
+              ++ ".log(" ++ (toStringInner "" b) ++ ")"
+            Ln x -> displayFunction "ln" x
+       in acc ++ xStr
+   in toStringInner "" expr
 
--- | @to_string_python expr@ is a Python representation of @expr@.
-to_string_python :: S -> String
-to_string_python expr =
+-- | @toStringPython expr@ is a Python representation of @expr@.
+toStringPython :: S -> String
+toStringPython expr =
   let
-    with_parens_if x tests =
+    withParensIf x tests =
       if foldl (\acc f -> acc || f x) False tests then
-        "(" ++ (to_string_inner "" x) ++ ")"
+        "(" ++ (toStringInner "" x) ++ ")"
       else
-        to_string_inner "" x
-    display_function fn_name x =
-      fn_name ++ "(" ++ (to_string_inner "" x) ++ ")"
-    to_string_inner acc x =
+        toStringInner "" x
+    displayFunction fnName x =
+      fnName ++ "(" ++ (toStringInner "" x) ++ ")"
+    toStringInner acc x =
       let
-        x_str =
+        xStr =
           case x of
             Literal f -> show f
             Symbol s -> s
-            Neg x -> "-" ++ (with_parens_if x [is_add, is_sub, is_neg])
-            Abs x -> display_function "abs" x
-            Sign x -> "copysign(1.0, " ++ (to_string_inner "" x) ++ ")"
+            Neg x -> "-" ++ (withParensIf x [isAdd, isSub, isNeg])
+            Abs x -> displayFunction "abs" x
+            Sign x -> "copysign(1.0, " ++ (toStringInner "" x) ++ ")"
             Add l (Neg r) ->
-              (to_string_inner "" l)
+              (toStringInner "" l)
               ++ " - "
-              ++ (with_parens_if r [is_add, is_sub, is_neg])
+              ++ (withParensIf r [isAdd, isSub, isNeg])
             Add l r ->
-              (to_string_inner "" l)
+              (toStringInner "" l)
               ++ " + "
-              ++ (with_parens_if r [is_neg])
+              ++ (withParensIf r [isNeg])
             Sub l (Neg r) ->
-              (to_string_inner "" l)
+              (toStringInner "" l)
               ++ " + "
-              ++ (with_parens_if r [is_neg])
+              ++ (withParensIf r [isNeg])
             Sub l r ->
-              (to_string_inner "" l)
+              (toStringInner "" l)
               ++ " - "
-              ++ (with_parens_if r [is_add, is_sub, is_neg])
+              ++ (withParensIf r [isAdd, isSub, isNeg])
             Mul l r ->
-              (with_parens_if l [is_add, is_sub])
+              (withParensIf l [isAdd, isSub])
               ++ " * "
-              ++ (with_parens_if r [is_add, is_sub])
+              ++ (withParensIf r [isAdd, isSub])
             Div l r ->
-              (with_parens_if l [is_add, is_sub])
+              (withParensIf l [isAdd, isSub])
               ++ " / "
-              ++ (with_parens_if r [is_add, is_sub, is_mul, is_div])
-            Sqrt x -> display_function "sqrt" x
-            Sin x -> display_function "sin" x
-            Cos x -> display_function "cos" x
-            Tan x -> display_function "tan" x
-            ASin x -> display_function "asin" x
-            ACos x -> display_function "acos" x
-            ATan x -> display_function "atan" x
-            Sinh x -> display_function "sinh" x
-            Cosh x -> display_function "cosh" x
-            Tanh x -> display_function "tanh" x
-            ASinh x -> display_function "asinh" x
-            ACosh x -> display_function "acosh" x
-            ATanh x -> display_function "atanh" x
+              ++ (withParensIf r [isAdd, isSub, isMul, isDiv])
+            Sqrt x -> displayFunction "sqrt" x
+            Sin x -> displayFunction "sin" x
+            Cos x -> displayFunction "cos" x
+            Tan x -> displayFunction "tan" x
+            ASin x -> displayFunction "asin" x
+            ACos x -> displayFunction "acos" x
+            ATan x -> displayFunction "atan" x
+            Sinh x -> displayFunction "sinh" x
+            Cosh x -> displayFunction "cosh" x
+            Tanh x -> displayFunction "tanh" x
+            ASinh x -> displayFunction "asinh" x
+            ACosh x -> displayFunction "acosh" x
+            ATanh x -> displayFunction "atanh" x
             Pow b e ->
-              (with_parens_if b [is_add, is_sub, is_mul, is_div, is_neg])
+              (withParensIf b [isAdd, isSub, isMul, isDiv, isNeg])
               ++ " ** "
-              ++ (with_parens_if e [is_add, is_sub, is_mul, is_div, is_neg])
-            Exp x -> display_function "exp" x
+              ++ (withParensIf e [isAdd, isSub, isMul, isDiv, isNeg])
+            Exp x -> displayFunction "exp" x
             Log b x ->
               "log("
-              ++ (to_string_inner "" x)
+              ++ (toStringInner "" x)
               ++ ", "
-              ++ (to_string_inner "" b)
+              ++ (toStringInner "" b)
               ++ ")"
-            Ln x -> display_function "log" x
-       in acc ++ x_str
-   in to_string_inner "" expr
+            Ln x -> displayFunction "log" x
+       in acc ++ xStr
+   in toStringInner "" expr
 
--- | @to_string_numpy expr@ is a NumPy representation of @expr@.
-to_string_numpy :: S -> String
-to_string_numpy expr =
+-- | @toStringNumpy expr@ is a NumPy representation of @expr@.
+toStringNumpy :: S -> String
+toStringNumpy expr =
   let
-    with_parens_if x tests =
+    withParensIf x tests =
       if foldl (\acc f -> acc || f x) False tests then
-        "(" ++ (to_string_inner "" x) ++ ")"
+        "(" ++ (toStringInner "" x) ++ ")"
       else
-        to_string_inner "" x
-    display_function fn_name x =
-      "np." ++ fn_name ++ "(" ++ (to_string_inner "" x) ++ ")"
-    to_string_inner acc x =
+        toStringInner "" x
+    displayFunction fnName x =
+      "np." ++ fnName ++ "(" ++ (toStringInner "" x) ++ ")"
+    toStringInner acc x =
       let
-        x_str =
+        xStr =
           case x of
             Literal f -> show f
             Symbol s -> s
-            Neg x -> "-" ++ (with_parens_if x [is_add, is_sub, is_neg])
-            Abs x -> display_function "abs" x
-            Sign x -> display_function "sign" x
+            Neg x -> "-" ++ (withParensIf x [isAdd, isSub, isNeg])
+            Abs x -> displayFunction "abs" x
+            Sign x -> displayFunction "sign" x
             Add l (Neg r) ->
-              (to_string_inner "" l)
+              (toStringInner "" l)
               ++ " - "
-              ++ (with_parens_if r [is_add, is_sub, is_neg])
+              ++ (withParensIf r [isAdd, isSub, isNeg])
             Add l r ->
-              (to_string_inner "" l)
+              (toStringInner "" l)
               ++ " + "
-              ++ (with_parens_if r [is_neg])
+              ++ (withParensIf r [isNeg])
             Sub l (Neg r) ->
-              (to_string_inner "" l)
+              (toStringInner "" l)
               ++ " + "
-              ++ (with_parens_if r [is_neg])
+              ++ (withParensIf r [isNeg])
             Sub l r ->
-              (to_string_inner "" l)
+              (toStringInner "" l)
               ++ " - "
-              ++ (with_parens_if r [is_add, is_sub, is_neg])
+              ++ (withParensIf r [isAdd, isSub, isNeg])
             Mul l r ->
-              (with_parens_if l [is_add, is_sub])
+              (withParensIf l [isAdd, isSub])
               ++ " * "
-              ++ (with_parens_if r [is_add, is_sub])
+              ++ (withParensIf r [isAdd, isSub])
             Div l r ->
-              (with_parens_if l [is_add, is_sub])
+              (withParensIf l [isAdd, isSub])
               ++ " / "
-              ++ (with_parens_if r [is_add, is_sub, is_mul, is_div])
-            Sqrt x -> display_function "sqrt" x
-            Sin x -> display_function "sin" x
-            Cos x -> display_function "cos" x
-            Tan x -> display_function "tan" x
-            ASin x -> display_function "arcsin" x
-            ACos x -> display_function "arccos" x
-            ATan x -> display_function "arctan" x
-            Sinh x -> display_function "sinh" x
-            Cosh x -> display_function "cosh" x
-            Tanh x -> display_function "tanh" x
-            ASinh x -> display_function "arcsinh" x
-            ACosh x -> display_function "arccosh" x
-            ATanh x -> display_function "arctanh" x
+              ++ (withParensIf r [isAdd, isSub, isMul, isDiv])
+            Sqrt x -> displayFunction "sqrt" x
+            Sin x -> displayFunction "sin" x
+            Cos x -> displayFunction "cos" x
+            Tan x -> displayFunction "tan" x
+            ASin x -> displayFunction "arcsin" x
+            ACos x -> displayFunction "arccos" x
+            ATan x -> displayFunction "arctan" x
+            Sinh x -> displayFunction "sinh" x
+            Cosh x -> displayFunction "cosh" x
+            Tanh x -> displayFunction "tanh" x
+            ASinh x -> displayFunction "arcsinh" x
+            ACosh x -> displayFunction "arccosh" x
+            ATanh x -> displayFunction "arctanh" x
             Pow b e ->
-              (with_parens_if b [is_add, is_sub, is_mul, is_div, is_neg, is_log])
+              (withParensIf b [isAdd, isSub, isMul, isDiv, isNeg, isLog])
               ++ " ** "
-              ++ (with_parens_if e [is_add, is_sub, is_mul, is_div, is_neg, is_log])
-            Exp x -> display_function "exp" x
+              ++ (withParensIf e [isAdd, isSub, isMul, isDiv, isNeg, isLog])
+            Exp x -> displayFunction "exp" x
             Log b x ->
               "np.log("
-              ++ (to_string_inner "" x)
+              ++ (toStringInner "" x)
               ++ ") / np.log( "
-              ++ (to_string_inner "" b)
+              ++ (toStringInner "" b)
               ++ ")"
-            Ln x -> display_function "log" x
-       in acc ++ x_str
-   in to_string_inner "" expr
+            Ln x -> displayFunction "log" x
+       in acc ++ xStr
+   in toStringInner "" expr
 
 -- Literal f
 -- Symbol s

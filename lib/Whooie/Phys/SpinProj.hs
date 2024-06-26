@@ -1,13 +1,12 @@
 -- | Definitions for manipulating a single spin-projection number.
 module Whooie.Phys.SpinProj
-  (
-    SpinProj,
-    new,
-    refl,
-    raise,
-    lower,
-    halves,
-    to_float,
+  ( SpinProj
+  , new
+  , refl
+  , raise
+  , lower
+  , halves
+  , toFloat
   ) where
 
 import Text.Printf (printf)
@@ -41,6 +40,6 @@ halves :: SpinProj -> Int
 halves (SpinProj m) = m
 
 -- | Return the quantum number as an ordinary floating-point value.
-to_float :: SpinProj -> Float
-to_float (SpinProj m) = (fromInteger $ toInteger m) / 2.0
+toFloat :: SpinProj -> Float
+toFloat (SpinProj m) = (fromInteger $ toInteger m) / 2.0
 

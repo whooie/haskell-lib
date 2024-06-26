@@ -1,16 +1,15 @@
 -- | Implements a real value associated with an experimental error that is
 -- automatically propagated through various operations.
 module Whooie.ExpVal
-  (
-    ExpVal,
-    val,
-    err,
-    new,
-    of_float,
-    of_pair,
-    ValueStrSci(..),
-    ValueStrOpts(..),
-    value_str,
+  ( ExpVal
+  , val
+  , err
+  , new
+  , ofFloat
+  , ofPair
+  , ValueStrSci (..)
+  , ValueStrOpts (..)
+  , valueStr
   ) where
 
 import Text.Printf (printf)
@@ -24,26 +23,26 @@ new :: Float -> Float -> ExpVal
 new v e = ExpVal { val = v, err = abs e }
 
 -- | Convert a @Float@ to an @ExpVal@ with zero error.
-of_float :: Float -> ExpVal
-of_float v = ExpVal { val = v, err = 0.0 }
+ofFloat :: Float -> ExpVal
+ofFloat v = ExpVal { val = v, err = 0.0 }
 
 -- | Convert a @(Float, Float)@ pair to an @ExpVal@, with the second item
 -- corresponding to the experimental error.
-of_pair :: (Float, Float) -> ExpVal
-of_pair (v, e) = ExpVal { val = v, err = abs e }
+ofPair :: (Float, Float) -> ExpVal
+ofPair (v, e) = ExpVal { val = v, err = abs e }
 
 -- | Used in `ValueStrOpts`.
 data ValueStrSci = No | Upper | Lower
 
-is_yes :: ValueStrSci -> Bool
-is_yes value_str_sci =
-  case value_str_sci of
+isYes :: ValueStrSci -> Bool
+isYes valueStrSci =
+  case valueStrSci of
     No -> False
     Upper -> True
     Lower -> True
 
-unwrap_or :: a -> Maybe a -> a
-unwrap_or def mbe =
+unwrapOr :: a -> Maybe a -> a
+unwrapOr def mbe =
   case mbe of
     Just a -> a
     Nothing -> def
@@ -54,10 +53,10 @@ fround = fromInteger . round
 ffloor :: Float -> Float
 ffloor = fromInteger . floor
 
-float_of_int :: Int -> Float
-float_of_int = fromInteger . toInteger
+floatOfInt :: Int -> Float
+floatOfInt = fromInteger . toInteger
 
--- | Passed to `value_str` to control formatting.
+-- | Passed to `valueStr` to control formatting.
 --
 -- - @trunc@: Use "truncated" notation; e.g. @0.12(3)@ as opposed to @0.12 +/-
 -- 0.03@.
@@ -77,35 +76,35 @@ data ValueStrOpts =
   }
 
 -- | Render an @ExpVal@ as a @String@.
-value_str :: ValueStrOpts -> ExpVal -> String
-value_str opts expval =
+valueStr :: ValueStrOpts -> ExpVal -> String
+valueStr opts expval =
   let
     x = val expval
     e = err expval
-    ord_x = ffloor $ logBase 10.0 $ abs $ val expval
-    ord_e =
+    ordX = ffloor $ logBase 10.0 $ abs $ val expval
+    ordE =
       if (err expval) /= 0.0 then
         Just $ ffloor $ logBase 10.0 $ abs $ err expval
       else
         Nothing
     (xp, ep, zp) =
-      if is_yes $ sci opts then
+      if isYes $ sci opts then
         let
-          o_e = unwrap_or 0.0 ord_e
-          xp' = (fround $ x / (10.0 ** o_e)) * (10.0 ** (o_e - ord_x))
+          oE = unwrapOr 0.0 ordE
+          xp' = (fround $ x / (10.0 ** oE)) * (10.0 ** (oE - ordX))
           ep' =
-            let f = (\o -> (fround $ e / (10.0 ** o)) * (10.0 ** (o - ord_x)))
-             in fmap f ord_e
-          zp' = floor $ max 0.0 (ord_x - o_e)
+            let f = (\o -> (fround $ e / (10.0 ** o)) * (10.0 ** (o - ordX)))
+             in fmap f ordE
+          zp' = floor $ max 0.0 (ordX - oE)
         in (xp', ep', zp')
       else
         let
-          o_e = unwrap_or 0.0 ord_e
-          xp' = (fround $ x / (10.0 ** o_e)) * (10.0 ** o_e)
+          oE = unwrapOr 0.0 ordE
+          xp' = (fround $ x / (10.0 ** oE)) * (10.0 ** oE)
           ep' =
             let f = (\o -> (fround $ e / (10.0 ** o)) * (10.0 ** o))
-             in fmap f ord_e
-          zp' = floor $ max 0.0 (negate o_e)
+             in fmap f ordE
+          zp' = floor $ max 0.0 (negate oE)
         in (xp', ep', zp')
     z =
       case dec opts of
@@ -118,40 +117,40 @@ value_str opts expval =
             No -> ""
             Upper ->
               let
-                exp_sign = if ord_x < 0.0 then "-" else "+"
-                exp_val = abs ord_x
-               in printf "E%s%02.0f" exp_sign exp_val :: String
+                expSign = if ordX < 0.0 then "-" else "+"
+                expVal = abs ordX
+               in printf "E%s%02.0f" expSign expVal :: String
             Lower ->
               let
-                exp_sign = if ord_x < 0.0 then "-" else "+"
-                exp_val = abs ord_x
-               in printf "e%s%02.0f" exp_sign exp_val :: String
+                expSign = if ordX < 0.0 then "-" else "+"
+                expVal = abs ordX
+               in printf "e%s%02.0f" expSign expVal :: String
        in
         if trunc opts then
           let
             value =
               printf (if sign opts then "%+.*f" else "%.*f") z xp :: String
-            error_dig =
+            errorDig =
               case ep of
-                Just er -> printf "%.0f" (er * (10.0 ** (float_of_int z)))
+                Just er -> printf "%.0f" (er * (10.0 ** (floatOfInt z)))
                 Nothing -> "nan"
-           in printf "%s(%s)%s" value error_dig ex :: String
+           in printf "%s(%s)%s" value errorDig ex :: String
         else
           let
             value =
               printf (if sign opts then "%+.*f" else "%.*f") z xp :: String
             pm = if latex opts then "\\pm" else "+/-"
-            error_val =
+            errorVal =
               case ep of
                 Just er -> printf "%.*f" z er
                 Nothing -> "nan"
-           in printf "%s%s %s %s%s" value ex pm error_val ex :: String
+           in printf "%s%s %s %s%s" value ex pm errorVal ex :: String
   in if latex opts then "$" ++ outstr ++ "$" else outstr
 
--- | Calls `value_str` with [formatting options](#t:ValueStrOpts) @trunc =
+-- | Calls `valueStr` with [formatting options](#t:ValueStrOpts) @trunc =
 -- True@, @sign = False@, @sci = No@, @latex = False@, @dec = Nothing@.
 instance Show ExpVal where
-  show expval = value_str opts expval
+  show expval = valueStr opts expval
     where
       opts = ValueStrOpts { trunc = True
                           , sign = False

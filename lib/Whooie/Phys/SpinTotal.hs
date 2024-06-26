@@ -1,10 +1,9 @@
 -- | Definitions for manipulating a single total-spin number.
 module Whooie.Phys.SpinTotal
-  (
-    SpinTotal,
-    new,
-    halves,
-    to_float,
+  ( SpinTotal
+  , new
+  , halves
+  , toFloat
   ) where
 
 import Text.Printf (printf)
@@ -29,6 +28,6 @@ halves :: SpinTotal -> Int
 halves (SpinTotal j) = j
 
 -- | Return the quantum number as an ordinary floating-point value.
-to_float :: SpinTotal -> Float
-to_float (SpinTotal j) = (fromInteger $ toInteger j) / 2.0
+toFloat :: SpinTotal -> Float
+toFloat (SpinTotal j) = (fromInteger $ toInteger j) / 2.0
 

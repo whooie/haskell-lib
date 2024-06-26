@@ -1,24 +1,23 @@
-{-# LANGUAGE TypeFamilies, AllowAmbiguousTypes, FlexibleContexts #-}
+{-# LANGUAGE TypeFamilies #-}
 
 -- | Provides implementations of various numerical techniques to compute
 -- integrals.
 module Whooie.Math.Integrate
-  (
-    Integrable, XCoord, zeroy, addyy, mulxy, mulfy,
-    Error(..),
-    Result,
-    trapz,
-    simpson,
-    boole,
-    integrate,
+  ( Integrable (..)
+  , Error (..)
+  , Result
+  , trapz
+  , simpson
+  , boole
+  , integrate
   ) where
 
 import Data.Function ((&))
 import Data.Kind (Type)
 import Text.Printf (printf)
-import Whooie.Utils.List (unpack_fml)
-import Whooie.Utils.Either (just_right_or_else)
-import Whooie.Utils.Misc ((>$<))
+import Whooie.Utils.List (unpackFml)
+import Whooie.Utils.Either (justRightOrElse)
+import Whooie.Utils.Misc ((<&>))
 
 -- | Provides basic functions for an integration scheme on some function,
 -- described by two types: @XCoord a@ as the function's domain and @a@ as its
@@ -48,15 +47,15 @@ type Result a = Either Error a
 -- sampling interval.
 trapz :: Integrable a => XCoord a -> [a] -> Result a
 trapz dx y =
-  unpack_fml y
-  >$< (\(f, m, l) -> (f, foldl addyy zeroy m, l))
-  >$< (\(f, m, l) -> (half `mulfy` f, m, half `mulfy` l))
-  >$< (\(f, m, l) -> dx `mulxy` (f `addyy` m `addyy` l))
-  & just_right_or_else (\() -> TooShort 2 (length y))
+  unpackFml y
+  <&> (\(f, m, l) -> (f, foldl addyy zeroy m, l))
+  <&> (\(f, m, l) -> (half `mulfy` f, m, half `mulfy` l))
+  <&> (\(f, m, l) -> dx `mulxy` (f `addyy` m `addyy` l))
+  & justRightOrElse (\() -> TooShort 2 (length y))
     where half = 0.5
 
-modidx_filter :: Int -> Int -> [(Int, a)] -> [a]
-modidx_filter n m items =
+modidxFilter :: Int -> Int -> [(Int, a)] -> [a]
+modidxFilter n m items =
   filter (\(k, _ak) -> k `mod` m == n) items
   & map (\(_k, ak) -> ak)
 
@@ -64,40 +63,40 @@ modidx_filter n m items =
 -- interval. This rule performs optimally for an odd number of points.
 simpson :: Integrable a => XCoord a -> [a] -> Result a
 simpson dx y =
-  unpack_fml (zip [0..] y)
-  >$< (\((_, f), m, (_, l)) -> (f, modidx_filter 1 2 m, modidx_filter 0 2 m, l))
-  >$< (\(f, m1, m0, l) -> (f, foldl addyy zeroy m1, foldl addyy zeroy m0, l))
-  >$< (\(f, m1, m0, l) ->
+  unpackFml (zip [0..] y)
+  <&> (\((_, f), m, (_, l)) -> (f, modidxFilter 1 2 m, modidxFilter 0 2 m, l))
+  <&> (\(f, m1, m0, l) -> (f, foldl addyy zeroy m1, foldl addyy zeroy m0, l))
+  <&> (\(f, m1, m0, l) ->
     ( third `mulfy` f
-    , simps_43 `mulfy` m1
-    , simps_23 `mulfy` m0
+    , simps43 `mulfy` m1
+    , simps23 `mulfy` m0
     , third `mulfy` l ))
-  >$< (\(f, m1, m0, l) -> dx `mulxy` (f `addyy` m1 `addyy` m0 `addyy` l))
-  & just_right_or_else (\() -> TooShort 2 (length y))
+  <&> (\(f, m1, m0, l) -> dx `mulxy` (f `addyy` m1 `addyy` m0 `addyy` l))
+  & justRightOrElse (\() -> TooShort 2 (length y))
     where third = 1.0 / 3.0
-          simps_43 = 4.0 / 3.0
-          simps_23 = 2.0 / 3.0
+          simps43 = 4.0 / 3.0
+          simps23 = 2.0 / 3.0
 
 -- | @boole dx y@: Compute the integral by Booles rule for fixed sampling
 -- interval. This rule performs optimally for a number of points that is one
 -- more than a multiple of four.
 boole :: Integrable a => XCoord a -> [a] -> Result a
 boole dx y =
-  unpack_fml (zip [0..] y)
-  >$< (\((_, f), m, (_, l)) ->
-    (f, map (\n -> modidx_filter n 4 m) [1, 2, 3, 0], l))
-  >$< (\(f, mm, l) -> (f, map (foldl addyy zeroy) mm, l))
-  >$< (\(f, mm, l) ->
-    ( boole_14_45 `mulfy` f
+  unpackFml (zip [0..] y)
+  <&> (\((_, f), m, (_, l)) ->
+    (f, map (\n -> modidxFilter n 4 m) [1, 2, 3, 0], l))
+  <&> (\(f, mm, l) -> (f, map (foldl addyy zeroy) mm, l))
+  <&> (\(f, mm, l) ->
+    ( boole1445 `mulfy` f
     , map (\(boolek, mk) -> boolek `mulfy` mk) (zip factors mm)
-    , boole_14_45 `mulfy` l ))
-  >$< (\(f, mm, l) -> dx `mulxy` (f `addyy` (foldl addyy zeroy mm) `addyy` l))
-  & just_right_or_else (\() -> TooShort 2 (length y))
-    where boole_14_45 = 14.0 / 45.0
-          boole_64_45 = 64.0 / 45.0
-          boole_24_45 =  8.0 / 15.0
-          boole_28_45 = 28.0 / 45.0
-          factors = [boole_64_45, boole_24_45, boole_64_45, boole_28_45]
+    , boole1445 `mulfy` l ))
+  <&> (\(f, mm, l) -> dx `mulxy` (f `addyy` (foldl addyy zeroy mm) `addyy` l))
+  & justRightOrElse (\() -> TooShort 2 (length y))
+    where boole1445 = 14.0 / 45.0
+          boole6445 = 64.0 / 45.0
+          boole2445 =  8.0 / 15.0
+          boole2845 = 28.0 / 45.0
+          factors = [boole6445, boole2445, boole6445, boole2845]
 
 -- | @integrate dx y@: Compute the integral for fixed sampling interval by the
 -- trapezoidal rule, Simpsons rule, or Booles rule depending on the number of

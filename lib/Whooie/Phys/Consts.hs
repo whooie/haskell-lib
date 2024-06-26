@@ -1,27 +1,26 @@
 -- | Physical constants.
 module Whooie.Phys.Consts
-  (
-    h,
-    hbar,
-    c,
-    n_a,
-    k_b,
-    e0,
-    u0,
-    g_g,
-    g,
-    e,
-    me,
-    mp,
-    mu,
-    rinf,
-    alpha,
-    r,
-    s_b,
-    a0,
-    u_b,
-    e_h,
-  )where
+  ( h
+  , hbar
+  , c
+  , nA
+  , kB
+  , e0
+  , u0
+  , gG
+  , g
+  , e
+  , me
+  , mp
+  , mu
+  , rinf
+  , alpha
+  , r
+  , sB
+  , a0
+  , uB
+  , eH
+  ) where
 
 -- | Planck constant (kg m^2 s^-1)
 h :: Float
@@ -39,13 +38,13 @@ c = 2.99792458e8
 -- +/- 0 (exact)
 
 -- | Avogadro's number
-n_a :: Float
-n_a = 6.02214076e23
+nA :: Float
+nA = 6.02214076e23
 -- +/- 0 (exact)
 
 -- | Boltzmann's constant (J K^-1)
-k_b :: Float
-k_b = 1.380649e-23
+kB :: Float
+kB = 1.380649e-23
 -- +/- 0 (exact)
 
 -- | electric permittivity in vacuum (F m^-1)
@@ -59,8 +58,8 @@ u0 = 1.25663706212e-6
 -- +/- 0.00000000019e-6
 
 -- | Newtonian gravitational constant (m^3 kg^-1 s^-2)
-g_g :: Float
-g_g = 6.67430e-11
+gG :: Float
+gG = 6.67430e-11
 -- +/- 0.00015e-11
 
 -- | gravitational acceleration near Earth's surface (m s^-2)
@@ -104,8 +103,8 @@ r = 8.314462618
 -- +/- 0 (exact)
 
 -- | Stefan-Boltzmann constant (W m^-2 K^-4)
-s_b :: Float
-s_b = 5.67036681608326799e-08
+sB :: Float
+sB = 5.67036681608326799e-08
 -- +/- 0 (exact)
 
 -- | Bohr radius (m)
@@ -114,12 +113,12 @@ a0 = 5.29177210903e-11
 -- +/- 0.00000000080e-11
 
 -- | Bohr magneton (J T^-1)
-u_b :: Float
-u_b = 9.2740100783e-24
+uB :: Float
+uB = 9.2740100783e-24
 -- +/- 0.0000000028e-24
 
 -- | Hartree energy (J) = 2\*Rinf\*h\*c
-e_h :: Float
-e_h = 4.3597447222071e-18
+eH :: Float
+eH = 4.3597447222071e-18
 -- +/- 0.0000000000085e-18
 

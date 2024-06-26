@@ -7,20 +7,19 @@
 -- | Provides an implementation of fourth-order Runge-Kutta with optional
 -- adaptive step size to solve 1D ordinary differential equations.
 module Whooie.Math.Solve
-  (
-    Integrable, addxx, addyy, subxx, subyy, mulfx, mulfy, mulxy,
-    rk4_step,
-    rk4,
-    Error(..),
-    Result,
-    AdaptiveStep, norm, cmpxx,
-    AdaptiveOpts(..),
-    rka_step,
-    rka,
+  ( Integrable (..)
+  , rk4Step
+  , rk4
+  , Error (..)
+  , Result
+  , AdaptiveStep (..)
+  , AdaptiveOpts (..)
+  , rkaStep
+  , rka
   ) where
 
 import Data.Function ((&))
-import Whooie.Utils.Misc ((>$<))
+import Whooie.Utils.Misc ((<&>))
 
 -- | Provides basic functions for an integration scheme on some ODE of a
 -- function, described by two types: @XCoord a@ as the function's domain and @a@
@@ -43,22 +42,22 @@ class Integrable a where
   -- | Multiply an element of the codomain by one of the domain.
   mulxy :: XCoord a -> a -> a
 
--- | @rk4_step rhs dx x y@: Take a single RK4 step of a certain size @dx@, given
+-- | @rk4Step rhs dx x y@: Take a single RK4 step of a certain size @dx@, given
 -- the right-hand side of the governing equation.
-rk4_step
+rk4Step
   :: Integrable a
   => (XCoord a -> a -> a)
   -> XCoord a
   -> XCoord a
   -> a
   -> a
-rk4_step rhs dx x y =
-  let x_half = x `addxx` (0.5 `mulfx` dx)
-      x_full = x `addxx` dx
+rk4Step rhs dx x y =
+  let xHalf = x `addxx` (0.5 `mulfx` dx)
+      xFull = x `addxx` dx
       k1 = rhs x      y
-      k2 = rhs x_half (y `addyy` (0.5 `mulfy` (dx `mulxy` k1)))
-      k3 = rhs x_half (y `addyy` (0.5 `mulfy` (dx `mulxy` k2)))
-      k4 = rhs x_full (y `addyy` (dx `mulxy` k3))
+      k2 = rhs xHalf (y `addyy` (0.5 `mulfy` (dx `mulxy` k1)))
+      k3 = rhs xHalf (y `addyy` (0.5 `mulfy` (dx `mulxy` k2)))
+      k4 = rhs xFull (y `addyy` (dx `mulxy` k3))
       k = k1 `addyy` k2 `addyy` k3 `addyy` k4
    in y `addyy` ((1.0 / 6.0) `mulfy` (dx `mulxy` k))
 
@@ -70,12 +69,12 @@ rk4_step rhs dx x y =
 -- side of the equation, opposite only a first-order derivative).
 rk4 :: Integrable a => (XCoord a -> a -> a) -> [XCoord a] -> a -> [a]
 rk4 rhs x y0 =
-  let scan_fn y_cur (x_cur, dx_cur) = rk4_step rhs dx_cur x_cur y_cur
+  let scanFn yCur (xCur, dxCur) = rk4Step rhs dxCur xCur yCur
       nx = length x
    in
     zip (drop 1 x) (take (nx - 1) x)
     & map (\(xn, xp) -> (xn `subxx` xp, xp))
-    & scanl scan_fn y0
+    & scanl scanFn y0
 
 -- | Error type returned if the adaptive step size routine fails to converge.
 data Error = NoConverge String
@@ -102,16 +101,16 @@ safe1 = 0.9
 safe2 :: Float
 safe2 = 4.0
 
-safe2_inv :: Float
-safe2_inv = 0.25
+safe2Inv :: Float
+safe2Inv = 0.25
 
-error_ratio :: AdaptiveStep a => a -> a -> Float -> Float
-error_ratio y0 y1 err0 =
+errorRatio :: AdaptiveStep a => a -> a -> Float -> Float
+errorRatio y0 y1 err0 =
   let scale = (err0 / 2.0) * ((norm y0) + (norm y1))
       diff = norm (y0 `subyy` y1)
    in diff / (scale + 1.0e-16)
 
-rka_step_inner
+rkaStepInner
   :: AdaptiveStep a
   => Float
   -> Int
@@ -121,37 +120,37 @@ rka_step_inner
   -> a
   -> Int
   -> Result (XCoord a, a, XCoord a)
-rka_step_inner eps maxit rhs dx x y iter_count =
-  if iter_count >= maxit then
+rkaStepInner eps maxit rhs dx x y iterCount =
+  if iterCount >= maxit then
     Left (NoConverge "failed to converge to the desired error bound")
   else
-    let dx_half = 0.5 `mulfx` dx
-        x_half = x `addxx` dx_half
-        y_half = rk4_step rhs dx_half x y
-        y_half2 = rk4_step rhs dx_half x_half y_half
-        x_full = x `addxx` dx
-        y_full = rk4_step rhs dx x y
-        e = error_ratio y_half2 y_full eps
+    let dxHalf = 0.5 `mulfx` dx
+        xHalf = x `addxx` dxHalf
+        yHalf = rk4Step rhs dxHalf x y
+        yHalf2 = rk4Step rhs dxHalf xHalf yHalf
+        xFull = x `addxx` dx
+        yFull = rk4Step rhs dx x y
+        e = errorRatio yHalf2 yFull eps
         dx' = (safe1 * (e ** (-0.2))) `mulfx` dx
-        dx_cond1 = safe2_inv `mulfx` dx
-        dx_cond2 = safe2 `mulfx` dx
-        dx'' = if cmpxx dx_cond1 dx' == GT then dx_cond1 else dx'
-        dx''' = if cmpxx dx_cond2 dx'' == LT then dx_cond2 else dx''
+        dxCond1 = safe2Inv `mulfx` dx
+        dxCond2 = safe2 `mulfx` dx
+        dx'' = if cmpxx dxCond1 dx' == GT then dxCond1 else dx'
+        dx''' = if cmpxx dxCond2 dx'' == LT then dxCond2 else dx''
      in
       if e < 1.0 then
-        Right (x_full, y_half2, dx''')
+        Right (xFull, yHalf2, dx''')
       else 
-        rka_step_inner eps maxit rhs dx''' x y (iter_count + 1)
+        rkaStepInner eps maxit rhs dx''' x y (iterCount + 1)
 
--- | @rka_step opts rhs dx x y@: Take a single adaptive RK4 step based on an
+-- | @rkaStep opts rhs dx x y@: Take a single adaptive RK4 step based on an
 -- initial, test step size. This function iteratively converges to a new step
 -- size by repeatedly comparing the estimated local truncation error for
 -- subdivided steps until the desired error bound is met.
 --
 -- Returns `NoConverge` if the error bound cannot be met within `AdaptiveStep`'s
 -- `maxiters` number of iterations. If successful, the returned tuple is of the
--- form @(new_x, new_y, new_dx)@.
-rka_step
+-- form @(newX, newY, newDx)@.
+rkaStep
   :: AdaptiveStep a
   => AdaptiveOpts
   -> (XCoord a -> a -> a)
@@ -159,10 +158,10 @@ rka_step
   -> XCoord a
   -> a
   -> Result (XCoord a, a, XCoord a)
-rka_step opts rhs dx x y = rka_step_inner eps maxit rhs dx x y 0
+rkaStep opts rhs dx x y = rkaStepInner eps maxit rhs dx x y 0
     where AdaptiveOpts { epsilon = eps, maxiters = maxit } = opts
 
-rka_inner
+rkaInner
   :: AdaptiveStep a
   => AdaptiveOpts
   -> (XCoord a -> a -> a)
@@ -171,21 +170,21 @@ rka_inner
   -> XCoord a
   -> a
   -> Result [(XCoord a, a)]
-rka_inner opts rhs x_stop dx x y =
-  if cmpxx x x_stop == GT then
+rkaInner opts rhs xStop dx x y =
+  if cmpxx x xStop == GT then
     Right []
   else
-    let x_rem = x_stop `subxx` x
-        dx' = if cmpxx dx x_rem == LT then dx else x_rem
+    let xRem = xStop `subxx` x
+        dx' = if cmpxx dx xRem == LT then dx else xRem
      in
-      case rka_step opts rhs dx' x y of
+      case rkaStep opts rhs dx' x y of
         Left err -> Left err
-        Right (x_next, y_next, dx_next) ->
-          case rka_inner opts rhs x_stop dx_next x_next y_next of
+        Right (xNext, yNext, dxNext) ->
+          case rkaInner opts rhs xStop dxNext xNext yNext of
             Left err' -> Left err'
-            Right points -> Right ((x_next, y_next) : points)
+            Right points -> Right ((xNext, yNext) : points)
 
--- | @rka opts rhs dx_init x_bounds y0@: Solve an ordinary differential equation
+-- | @rka opts rhs dxInit xBounds y0@: Solve an ordinary differential equation
 -- over some coordinate bounds via RK4 with adaptive step sizes, given an
 -- initial condition.
 --
@@ -200,7 +199,7 @@ rka
   -> (XCoord a, XCoord a)
   -> a
   -> Result ([XCoord a], [a])
-rka opts rhs dx_init (x_start, x_stop) y0 =
-  rka_inner opts rhs x_stop dx_init x_start y0
-  >$< (\points -> unzip points)
+rka opts rhs dxInit (xStart, xStop) y0 =
+  rkaInner opts rhs xStop dxInit xStart y0
+  <&> (\points -> unzip points)
 
