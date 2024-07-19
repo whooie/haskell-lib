@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 
--- Implements very simple symbolic math on the field of real numbers.
+-- | Implements very simple symbolic math on the field of real numbers.
 module Whooie.Symbolic
   ( S (..)
   , constE
@@ -546,21 +546,21 @@ isTan expr =
     Tan _ -> True
     _ -> False
 
--- | @isAsin expr@ returns @True@ if @expr@ is `Asin`.
+-- | @isAsin expr@ returns @True@ if @expr@ is `ASin`.
 isAsin :: S -> Bool
 isAsin expr =
   case expr of
     ASin _ -> True
     _ -> False
 
--- | @isAcos expr@ returns @True@ if @expr@ is `Acos`.
+-- | @isAcos expr@ returns @True@ if @expr@ is `ACos`.
 isAcos :: S -> Bool
 isAcos expr =
   case expr of
     ACos _ -> True
     _ -> False
 
--- | @isAtan expr@ returns @True@ if @expr@ is `Atan`.
+-- | @isAtan expr@ returns @True@ if @expr@ is `ATan`.
 isAtan :: S -> Bool
 isAtan expr =
   case expr of
@@ -588,21 +588,21 @@ isTanh expr =
     Tanh _ -> True
     _ -> False
 
--- | @isAsinh expr@ returns @True@ if @expr@ is `Asinh`.
+-- | @isAsinh expr@ returns @True@ if @expr@ is `ASinh`.
 isAsinh :: S -> Bool
 isAsinh expr =
   case expr of
     ASinh _ -> True
     _ -> False
 
--- | @isAcosh expr@ returns @True@ if @expr@ is `Acosh`.
+-- | @isAcosh expr@ returns @True@ if @expr@ is `ACosh`.
 isAcosh :: S -> Bool
 isAcosh expr =
   case expr of
     ACosh _ -> True
     _ -> False
 
--- | @isAtanh expr@ returns @True@ if @expr@ is `Atanh`.
+-- | @isAtanh expr@ returns @True@ if @expr@ is `ATanh`.
 isAtanh :: S -> Bool
 isAtanh expr =
   case expr of
