@@ -1,6 +1,5 @@
 **/.stack-work/*
 *.lock
-*.cabal
 **.png
 **.svg
 **.pdf

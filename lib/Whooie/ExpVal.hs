@@ -67,13 +67,11 @@ floatOfInt = fromInteger . toInteger
 -- @dec@: Print numbers with this number of decimal places. @Nothing@ leaves
 -- this up to the experimental error value.
 data ValueStrOpts =
-  ValueStrOpts {
-    trunc :: Bool,
-    sign :: Bool,
-    sci :: ValueStrSci,
-    latex :: Bool,
-    dec :: Maybe Int
-  }
+  ValueStrOpts { trunc :: Bool
+               , sign :: Bool
+               , sci :: ValueStrSci
+               , latex :: Bool
+               , dec :: Maybe Int }
 
 -- | Render an @ExpVal@ as a @String@.
 valueStr :: ValueStrOpts -> ExpVal -> String
