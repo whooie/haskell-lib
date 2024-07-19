@@ -5,7 +5,7 @@ module Whooie.ExpVal
   , val
   , err
   , new
-  , ofFloat
+  , ofDouble
   , ofPair
   , ValueStrSci (..)
   , ValueStrOpts (..)
@@ -16,19 +16,19 @@ import Text.Printf (printf)
 
 -- | Main data type. Each value of this type is a number @val@ associated with a
 -- non-negative-valued error @err@.
-data ExpVal = ExpVal { val :: Float, err :: Float }
+data ExpVal = ExpVal { val :: Double, err :: Double }
 
 -- | Create a new @ExpVal@.
-new :: Float -> Float -> ExpVal
+new :: Double -> Double -> ExpVal
 new v e = ExpVal { val = v, err = abs e }
 
--- | Convert a @Float@ to an @ExpVal@ with zero error.
-ofFloat :: Float -> ExpVal
-ofFloat v = ExpVal { val = v, err = 0.0 }
+-- | Convert a @Double@ to an @ExpVal@ with zero error.
+ofDouble :: Double -> ExpVal
+ofDouble v = ExpVal { val = v, err = 0.0 }
 
--- | Convert a @(Float, Float)@ pair to an @ExpVal@, with the second item
+-- | Convert a @(Double, Double)@ pair to an @ExpVal@, with the second item
 -- corresponding to the experimental error.
-ofPair :: (Float, Float) -> ExpVal
+ofPair :: (Double, Double) -> ExpVal
 ofPair (v, e) = ExpVal { val = v, err = abs e }
 
 -- | Used in `ValueStrOpts`.
@@ -47,13 +47,13 @@ unwrapOr def mbe =
     Just a -> a
     Nothing -> def
 
-fround :: Float -> Float
+fround :: Double -> Double
 fround = fromInteger . round
 
-ffloor :: Float -> Float
+ffloor :: Double -> Double
 ffloor = fromInteger . floor
 
-floatOfInt :: Int -> Float
+floatOfInt :: Int -> Double
 floatOfInt = fromInteger . toInteger
 
 -- | Passed to `valueStr` to control formatting.

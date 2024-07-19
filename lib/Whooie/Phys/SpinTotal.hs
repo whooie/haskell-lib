@@ -3,7 +3,7 @@ module Whooie.Phys.SpinTotal
   ( SpinTotal
   , new
   , halves
-  , toFloat
+  , toDouble
   ) where
 
 import Text.Printf (printf)
@@ -28,6 +28,6 @@ halves :: SpinTotal -> Int
 halves (SpinTotal j) = j
 
 -- | Return the quantum number as an ordinary floating-point value.
-toFloat :: SpinTotal -> Float
-toFloat (SpinTotal j) = (fromInteger $ toInteger j) / 2.0
+toDouble :: SpinTotal -> Double
+toDouble (SpinTotal j) = (fromInteger $ toInteger j) / 2.0
 

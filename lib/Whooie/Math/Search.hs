@@ -23,7 +23,7 @@ type Result e a = Either (NoConverge e) a
 -- | Options for searching routines. @epsilon@ is the desired precision bound
 -- and @maxiters@ is the maximum number of steps that can be taken before a
 -- `NoConverge` is returned.
-data SearchOpts = SearchOpts { epsilon :: Float, maxiters :: Int }
+data SearchOpts = SearchOpts { epsilon :: Double, maxiters :: Int }
 
 -- | Defines functions for a Newton-Raphson root search.
 class Fractional a => NRDomain a where
@@ -32,11 +32,11 @@ class Fractional a => NRDomain a where
   clamp :: a -> a
   clamp = id
   -- | Return @True@ if a certain step size meets a desired precision bound.
-  stepLtEps :: a -> Float -> Bool
+  stepLtEps :: a -> Double -> Bool
 
 nrFindRootInner
   :: NRDomain a
-  => Float
+  => Double
   -> Int
   -> (a -> a)
   -> (a -> a)
@@ -76,18 +76,18 @@ class Fractional a => GSDomain a where
   -- | Generate a point within a given sub-domain according to this
   -- parameterization, which must map @0.0@ and @1.0@ to the ends of the
   -- sub-domain.
-  genPoint :: (a, a) -> Float -> a
+  genPoint :: (a, a) -> Double -> a
   -- | Return @True@ if a sub-domain meets a desired precision bound.
-  bracketLtEps :: (a, a) -> Float -> Bool
+  bracketLtEps :: (a, a) -> Double -> Bool
 
 -- | Represents a preference between two elements of the codomain of the
 -- searched space.
 data Cmp = L | R
 
-invphi :: Float
+invphi :: Double
 invphi = 0.6180339887498949
 
-invphi2 :: Float
+invphi2 :: Double
 invphi2 = 0.3819660112501051
 
 -- | An @(x, y)@ pair.
@@ -99,7 +99,7 @@ type Bracket a = (Point a, Point a)
 
 gsFindExtremumInner
   :: GSDomain a
-  => Float
+  => Double
   -> Int
   -> (a -> a)
   -> (a -> a -> Cmp)

@@ -24,14 +24,13 @@ module Whooie.Utils.Maybe
   ) where
 
 import Prelude
-  (
-    Bool(..),
-    Maybe(..),
-    String,
-    IO,
-    error,
-    return,
-    ($),
+  ( Bool(..)
+  , Maybe(..)
+  , String
+  , IO
+  , error
+  , return
+  , ($)
   )
 
 -- | @isJust opt@ returns @True@ if @opt@ is @Just@.

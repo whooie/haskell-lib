@@ -31,17 +31,17 @@ module Whooie.Utils.Either
   ) where
 
 import Prelude
-  (
-    Show, show,
-    Bool (..),
-    Either (..),
-    Maybe (..),
-    String,
-    IO,
-    error,
-    ($),
-    (++),
-    return,
+  ( Show
+  , show
+  , Bool (..)
+  , Either (..)
+  , Maybe (..)
+  , String
+  , IO
+  , error
+  , ($)
+  , (++)
+  , return
   )
 
 -- | @isRight eith@ returns @True@ if @eith@ is @Right@.

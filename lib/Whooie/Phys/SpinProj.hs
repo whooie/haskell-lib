@@ -6,7 +6,7 @@ module Whooie.Phys.SpinProj
   , raise
   , lower
   , halves
-  , toFloat
+  , toDouble
   ) where
 
 import Text.Printf (printf)
@@ -40,6 +40,6 @@ halves :: SpinProj -> Int
 halves (SpinProj m) = m
 
 -- | Return the quantum number as an ordinary floating-point value.
-toFloat :: SpinProj -> Float
-toFloat (SpinProj m) = (fromInteger $ toInteger m) / 2.0
+toDouble :: SpinProj -> Double
+toDouble (SpinProj m) = (fromInteger $ toInteger m) / 2.0
 

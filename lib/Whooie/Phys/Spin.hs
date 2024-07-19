@@ -13,7 +13,7 @@ module Whooie.Phys.Spin
   , newStretchedNeg
   , newStretched
   , isStretched
-  , toFloats
+  , toDoubles
   , cmp
   , refl
   , raise
@@ -86,8 +86,8 @@ halves :: Spin -> (Int, Int)
 halves (Spin tot proj) = (Tot.halves tot, Proj.halves proj)
 
 -- | Convert to a pair of ordinary floating-point values.
-toFloats :: Spin -> (Float, Float)
-toFloats (Spin tot proj) = (Tot.toFloat tot, Proj.toFloat proj)
+toDoubles :: Spin -> (Double, Double)
+toDoubles (Spin tot proj) = (Tot.toDouble tot, Proj.toDouble proj)
 
 -- | Get the total-spin part of a @Spin@.
 tot :: Spin -> Tot.SpinTotal
@@ -184,13 +184,13 @@ cmp :: Spin -> Spin -> Maybe Ordering
 cmp (Spin totl projl) (Spin totr projr) =
   if totl == totr then Just $ compare projl projr else Nothing
 
-ffactorial :: Int -> Float
+ffactorial :: Int -> Double
 ffactorial n = fromInteger $ toInteger $ foldl (*) 1 [2 .. n]
 
 (//) :: Int -> Int -> Int
 (//) = quot
 
-cgSummand :: (Int, Int, Int, Int, Int, Int) -> Int -> Float
+cgSummand :: (Int, Int, Int, Int, Int, Int) -> Int -> Double
 cgSummand (j1, m1, j2, m2, j12, _m12) k =
   let
     sign = if k `mod` 2 == 0 then 1.0 else -1.0
@@ -211,7 +211,7 @@ cgSummand (j1, m1, j2, m2, j12, _m12) k =
 
 -- | @cg jm1 jm2 jm12@: Compute the Clebsch-Gordan coefficient
 -- @⟨jm1, jm2∣jm12⟩@.
-cg :: Spin -> Spin -> Spin -> Float
+cg :: Spin -> Spin -> Spin -> Double
 cg jm1 jm2 jm12 =
   let
     (j1, m1) = halves jm1
@@ -266,7 +266,7 @@ w3jSel jm1 jm2 jm3 = msum0 && jsumBounds && m0ImpliesJsumEven
           && ((j1 + j2 + j3) // 2) `mod` 2 == 0
 
 -- | @w3j jm1 jm2 jm3@: Compute the Wigner 3*j* symbol @(jm1 jm2 jm3)@.
-w3j :: Spin -> Spin -> Spin -> Float
+w3j :: Spin -> Spin -> Spin -> Double
 w3j jm1 jm2 jm3 =
   let
     j1 = Tot.halves $ tot jm1
@@ -285,7 +285,7 @@ w6jFilter (jm1, jm2, jm3, jm4, jm5, jm6) =
   && (w3jSel jm4 jm2 (refl jm6))
   && (w3jSel (refl jm4) jm5 jm3)
 
-w6jSign :: (Spin, Spin, Spin, Spin, Spin, Spin) -> Float
+w6jSign :: (Spin, Spin, Spin, Spin, Spin, Spin) -> Double
 w6jSign (jm1, jm2, jm3, jm4, jm5, jm6) =
   let
     (j1, m1) = halves jm1
@@ -297,7 +297,7 @@ w6jSign (jm1, jm2, jm3, jm4, jm5, jm6) =
     k = (j1 - m1 + j2 - m2 + j3 - m3 + j4 - m4 + j5 - m5 + j6 - m6) // 2
    in if k `mod` 2 == 0 then 1.0 else -1.0
 
-w6jMap :: (Spin, Spin, Spin, Spin, Spin, Spin) -> Float
+w6jMap :: (Spin, Spin, Spin, Spin, Spin, Spin) -> Double
 w6jMap (jm1, jm2, jm3, jm4, jm5, jm6) =
   (w6jSign (jm1, jm2, jm3, jm4, jm5, jm6))
   * (w3j (refl jm1) (refl jm2) (refl jm3))
@@ -314,7 +314,7 @@ w6j
   -> Tot.SpinTotal
   -> Tot.SpinTotal
   -> Tot.SpinTotal
-  -> Float
+  -> Double
 w6j j1 j2 j3 j4 j5 j6 =
   foldl (+) 0.0 $ map w6jMap $ filter w6jFilter spins
     where

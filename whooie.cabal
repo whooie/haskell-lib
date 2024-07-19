@@ -27,9 +27,7 @@ library
       Whooie.Utils.List
       Whooie.Utils.Maybe
       Whooie.Utils.Misc
-      Whooie.Utils.Option
       Whooie.Utils.Random
-      Whooie.Utils.Result
   other-modules:
       Paths_whooie
   hs-source-dirs:

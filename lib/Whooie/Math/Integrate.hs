@@ -31,8 +31,8 @@ class Integrable a where
   addyy :: a -> a -> a
   -- | Multiply an element of the codomain by one of the domain.
   mulxy :: XCoord a -> a -> a
-  -- | Multiply an element of the codomain by an ordinary `Float`.
-  mulfy :: Float -> a -> a
+  -- | Multiply an element of the codomain by an ordinary `Double`.
+  mulfy :: Double -> a -> a
 
 -- | Main error type.
 data Error = TooShort Int Int deriving Eq

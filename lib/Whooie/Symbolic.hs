@@ -79,7 +79,7 @@ import Text.Printf (printf)
 -- expressions or methods in `Num`, `Fractional`, or `Floating` to make
 -- simplifications where possible.
 data S =
-    Literal Float
+    Literal Double
   | Symbol String
   | Neg S
   | Abs S
@@ -868,7 +868,7 @@ subs ss expr =
 -- within @expr@ with @replace@ and re-evaluate all sub-expressions.
 --
 -- @target@ must be matched verbatim in order for the subtitition to be made.
-subsfSingle :: S -> Float -> S -> S
+subsfSingle :: S -> Double -> S -> S
 subsfSingle target replace expr =
   let doSubs = subsfSingle target replace
    in
@@ -904,7 +904,7 @@ subsfSingle target replace expr =
         Ln x -> log (doSubs x)
 
 -- | Make a series of substititions and re-evaluate all sub-expressions.
-subsf :: [(S, Float)] -> S -> S
+subsf :: [(S, Double)] -> S -> S
 subsf ss expr =
   case ss of
     [] -> expr
@@ -917,22 +917,22 @@ data Error = EvalfError [S]
 type Result a = Either Error a
 
 -- | @evalfSingle target replace expr@ replaces all instances of @target@
--- within @expr@ with @replace@ and attempt to re-evaluate to a single @Float@.
+-- within @expr@ with @replace@ and attempt to re-evaluate to a single @Double@.
 --
 -- @Error syms@ is returned if there are any symbols remaining, where @syms@ is
 -- a list of all such unique symbols.
-evalfSingle :: S -> Float -> S -> Result Float
+evalfSingle :: S -> Double -> S -> Result Double
 evalfSingle target replace expr =
   case subsfSingle target replace expr of
     Literal x -> Right x
     x -> Left $ EvalfError (getSymbols x)
 
 -- | Make a series of substitutions and attempt to re-evaluate to a single
--- @Float@.
+-- @Double@.
 --
 -- @Error syms@ is returned if there are any symbols remaining, where @syms@ is
 -- a list of all such unique symbols.
-evalf :: [(S, Float)] -> S -> Result Float
+evalf :: [(S, Double)] -> S -> Result Double
 evalf ss expr =
   case subsf ss expr of
     Literal x -> Right x

@@ -35,10 +35,10 @@ class Integrable a where
   subxx :: XCoord a -> XCoord a -> XCoord a
   -- | Subtract two elements of the codomain.
   subyy :: a -> a -> a
-  -- | Multiply an element of the domain by an ordinary `Float`.
-  mulfx :: Float -> XCoord a -> XCoord a
-  -- | Multiply an element of the codomain by an ordinary `Float`.
-  mulfy :: Float -> a -> a
+  -- | Multiply an element of the domain by an ordinary `Double`.
+  mulfx :: Double -> XCoord a -> XCoord a
+  -- | Multiply an element of the codomain by an ordinary `Double`.
+  mulfy :: Double -> a -> a
   -- | Multiply an element of the codomain by one of the domain.
   mulxy :: XCoord a -> a -> a
 
@@ -86,25 +86,25 @@ type Result a = Either Error a
 -- adaptive step size routine.
 class Integrable a => AdaptiveStep a where
   -- | The real-valued norm of an @a@.
-  norm :: a -> Float
+  norm :: a -> Double
   -- | Compare two @XCoord a@ values.
   cmpxx :: XCoord a -> XCoord a -> Ordering
 
 -- | Simple structure to hold options for the adaptive step size routine.
 -- @epsilon@ is the desired precision bound, and @maxiters@ is the maixmum
 -- number of iterations allowed before `NoConverge` is returned.
-data AdaptiveOpts = AdaptiveOpts { epsilon :: Float, maxiters :: Int }
+data AdaptiveOpts = AdaptiveOpts { epsilon :: Double, maxiters :: Int }
 
-safe1 :: Float
+safe1 :: Double
 safe1 = 0.9
 
-safe2 :: Float
+safe2 :: Double
 safe2 = 4.0
 
-safe2Inv :: Float
+safe2Inv :: Double
 safe2Inv = 0.25
 
-errorRatio :: AdaptiveStep a => a -> a -> Float -> Float
+errorRatio :: AdaptiveStep a => a -> a -> Double -> Double
 errorRatio y0 y1 err0 =
   let scale = (err0 / 2.0) * ((norm y0) + (norm y1))
       diff = norm (y0 `subyy` y1)
@@ -112,7 +112,7 @@ errorRatio y0 y1 err0 =
 
 rkaStepInner
   :: AdaptiveStep a
-  => Float
+  => Double
   -> Int
   -> (XCoord a -> a -> a)
   -> XCoord a
