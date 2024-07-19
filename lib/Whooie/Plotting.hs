@@ -321,22 +321,22 @@ data ColorMap
   deriving (Show, Eq, Enum)
 
 allCmaps :: [ColorMap]
-allCmaps = map toEnum [1..12] -- number of `ColorMap` variants
+allCmaps = map toEnum [0..11]
 
 -- | Get the name of a 'ColorMap' registered with matplotlib.
 cmapName :: ColorMap -> String
-cmapName HotCold    = "hot-cold"
-cmapName FireIce    = "fire-ice"
-cmapName Powerade   = "powerade"
-cmapName Floral     = "floral"
-cmapName BlueHot    = "blue-hot"
-cmapName Cyborg     = "cyborg"
-cmapName Sport      = "sport"
-cmapName Vibrant    = "vibrant"
-cmapName Artsy      = "artsy"
-cmapName Pix        = "pix"
-cmapName Sunset     = "sunset"
-cmapName Topography = "topography"
+cmapName HotCold    = "\"hot-cold\""
+cmapName FireIce    = "\"fire-ice\""
+cmapName Powerade   = "\"powerade\""
+cmapName Floral     = "\"floral\""
+cmapName BlueHot    = "\"blue-hot\""
+cmapName Cyborg     = "\"cyborg\""
+cmapName Sport      = "\"sport\""
+cmapName Vibrant    = "\"vibrant\""
+cmapName Artsy      = "\"artsy\""
+cmapName Pix        = "\"pix\""
+cmapName Sunset     = "\"sunset\""
+cmapName Topography = "\"topography\""
 
 -- | Get the bare thresholds and hex color strings for a particular color map.
 --
@@ -385,7 +385,7 @@ pyLinSegCmap name cmap =
 
 pyRegisterCmap :: Matplotlib -> ColorMap -> Matplotlib
 pyRegisterCmap plot cmap =
-  plot # ("\nmatplotlib.register(" ++ linsegcmap ++ ")")
+  plot # ("\nmatplotlib.colormaps.register(" ++ linsegcmap ++ ")")
     where linsegcmap = pyLinSegCmap (cmapName cmap) (cmapPts cmap)
 
 -- | An empty plot with a bunch of @rcParams@ and color settings.
@@ -394,9 +394,6 @@ defplot =
   (foldl pyRegisterCmap mp allCmaps)
   # ("\ncolors = " ++ (pyStrList $ colorsWhooie))
   # "\nfrom cycler import cycler"
-  # "\nplot.close(fig)"
-  # "\nmatplotlib.use(\"QtAgg\")"
-  # "\nfig, ax = plot.subplots()"
   % setParameter "axes.grid" True
   % setParameter "axes.grid.which" "\"both\""
   % setParameter "axes.linewidth" (0.65 :: Double)
@@ -432,4 +429,7 @@ defplot =
   % setParameter "ytick.direction" "\"in\""
   % setParameter "ytick.major.size" (2.0 :: Double)
   % setParameter "ytick.minor.size" (1.5 :: Double)
+  # "\nplot.close(fig)"
+  # "\nmatplotlib.use(\"QtAgg\")"
+  # "\nfig, ax = plot.subplots()"
 
